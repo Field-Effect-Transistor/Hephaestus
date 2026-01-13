@@ -1,0 +1,19 @@
+# PlatformIO
+.pio/
+.vscode/
+*.bin
+*.elf
+
+# KiCad
+*.lck
+*.kicad_prl
+*.bak
+*.kicad_pcb-bak
+*_autosave.kicad_sch
+.history/
+*-backups/
+*.zip
+fp-info-cache
+
+# Documentation
+~$*.docx
