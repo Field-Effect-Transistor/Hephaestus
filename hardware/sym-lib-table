@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "SolderingStationLib")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/SolderingStationLib.kicad_sym")(options "")(descr ""))
+)
