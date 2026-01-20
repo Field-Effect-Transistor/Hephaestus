@@ -614,7 +614,7 @@
     "meta": {
       "version": 1
     },
-    "net_format_name": "",
+    "net_format_name": "KiCad",
     "page_layout_descr_file": "kicad-embed://SolderingStation.kicad_wks",
     "plot_directory": "",
     "reuse_designators": true,
