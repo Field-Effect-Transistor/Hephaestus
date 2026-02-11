@@ -3327,6 +3327,108 @@
 			)
 		)
 	)
+	(sheet
+		(at 170.18 71.12)
+		(size 35.56 20.32)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "9d3e2881-efe6-4275-9d50-896b95215637")
+		(property "Sheetname" "Safety Relay"
+			(at 170.18 70.4084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "safetyRelay.kicad_sch"
+			(at 170.18 92.0246 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "3V3" input
+			(at 170.18 74.93 180)
+			(uuid "2bef5fd8-3863-4f15-8da2-a60b442d1aac")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "24V" input
+			(at 170.18 78.74 180)
+			(uuid "9b2f8654-0a70-4468-8cd9-97e926e7ee83")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "INPUT" input
+			(at 170.18 82.55 180)
+			(uuid "65bb4805-7912-4ac2-b1c3-47a95f57943e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "OUTPUT" input
+			(at 205.74 74.93 0)
+			(uuid "e0795817-fa9f-4eb4-bc38-88413f18f96e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "RELAY_CTRL" input
+			(at 170.18 86.36 180)
+			(uuid "017dafed-99f5-4fac-a6c8-41ae9cd62c70")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "START_SENSE" input
+			(at 205.74 78.74 0)
+			(uuid "dd5d0216-0862-43d2-a6b8-8c08bd82b6ab")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "SolderingStation"
+				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d"
+					(page "6")
+				)
+			)
+		)
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")
