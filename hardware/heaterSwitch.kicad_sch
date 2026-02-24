@@ -6,8 +6,8 @@
 	(paper "A5")
 	(title_block
 		(title "Heater High side switch")
-		(date "2026-01-22")
-		(rev "vJun2026")
+		(date "2026-02-19")
+		(rev "vFeb2026")
 		(company "Author: Field Effect Transistor")
 		(comment 1 "https://github.com/Field-Effect-Transistor")
 	)
@@ -1269,12 +1269,6 @@
 		(uuid "21c5ee4f-22f9-4141-8acf-542940227468")
 	)
 	(junction
-		(at 81.28 73.66)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3da51cff-249a-4237-a44d-11d430a5f4e4")
-	)
-	(junction
 		(at 121.92 83.82)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1348,6 +1342,16 @@
 	)
 	(wire
 		(pts
+			(xy 135.89 91.44) (xy 135.89 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "25ad39d7-ce28-422d-a7d0-387bb35c9185")
+	)
+	(wire
+		(pts
 			(xy 121.92 58.42) (xy 124.46 58.42)
 		)
 		(stroke
@@ -1398,7 +1402,7 @@
 	)
 	(wire
 		(pts
-			(xy 76.2 73.66) (xy 81.28 73.66)
+			(xy 76.2 73.66) (xy 86.36 73.66)
 		)
 		(stroke
 			(width 0)
@@ -1438,16 +1442,6 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 58.42) (xy 81.28 63.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "705aedeb-08d3-457a-a7dd-37fbe9d81d27")
-	)
-	(wire
-		(pts
 			(xy 121.92 78.74) (xy 121.92 83.82)
 		)
 		(stroke
@@ -1455,16 +1449,6 @@
 			(type default)
 		)
 		(uuid "7e76befe-25fb-475e-8ee4-b076ae09add6")
-	)
-	(wire
-		(pts
-			(xy 81.28 73.66) (xy 86.36 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8757f52a-3490-4b8d-bda1-f68c649a2e54")
 	)
 	(wire
 		(pts
@@ -1508,6 +1492,16 @@
 	)
 	(wire
 		(pts
+			(xy 135.89 90.17) (xy 139.7 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aec3ebd5-f5c9-4acb-b01e-280ac2a2b1b2")
+	)
+	(wire
+		(pts
 			(xy 111.76 66.04) (xy 111.76 68.58)
 		)
 		(stroke
@@ -1525,16 +1519,6 @@
 			(type default)
 		)
 		(uuid "b22090c3-8402-4b29-86eb-af3127573549")
-	)
-	(wire
-		(pts
-			(xy 81.28 71.12) (xy 81.28 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bcbc8c4e-548d-4eb0-97e2-4d08d90ee102")
 	)
 	(wire
 		(pts
@@ -1596,17 +1580,6 @@
 		)
 		(uuid "ff37b129-51f4-4df3-ac8e-7c3f293a9a67")
 	)
-	(hierarchical_label "3V3"
-		(shape input)
-		(at 81.28 58.42 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "15f70a5f-3a5d-47b0-b761-9bfb50e94200")
-	)
 	(hierarchical_label "IRON_CTRL"
 		(shape input)
 		(at 76.2 73.66 180)
@@ -1639,6 +1612,17 @@
 			(justify left)
 		)
 		(uuid "f2cc0e35-a234-4e7f-a0d0-bec9f87e8a11")
+	)
+	(hierarchical_label "PWM_I-"
+		(shape input)
+		(at 139.7 90.17 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f827cc84-f4db-438f-9515-3222dad0872a")
 	)
 	(symbol
 		(lib_id "Transistor_BJT:S8050")
@@ -1777,6 +1761,73 @@
 			(project "SolderingStation"
 				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/7e298410-b788-4168-b974-c1c32784a86d"
 					(reference "R10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDREF")
+		(at 135.89 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2f8da887-9d41-4721-9a5a-a2f052cd0f88")
+		(property "Reference" "#PWR017"
+			(at 135.89 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GNDREF"
+			(at 135.89 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 135.89 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 135.89 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDREF\" , reference supply ground"
+			(at 135.89 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0c4debb8-cbfe-4928-b9a0-c8f33804c6bb")
+		)
+		(instances
+			(project "SolderingStation"
+				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/7e298410-b788-4168-b974-c1c32784a86d"
+					(reference "#PWR017")
 					(unit 1)
 				)
 			)
@@ -2049,75 +2100,6 @@
 			(project "SolderingStation"
 				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/7e298410-b788-4168-b974-c1c32784a86d"
 					(reference "R11")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 81.28 67.31 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7264e254-ba4f-4964-9adc-36468e467140")
-		(property "Reference" "R15"
-			(at 82.55 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 82.55 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 79.502 67.31 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 81.28 67.31 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 81.28 67.31 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "255f913f-8d29-4a89-a937-f95eac45ecac")
-		)
-		(pin "1"
-			(uuid "daca8839-0168-4355-abb2-6d1bdab49151")
-		)
-		(instances
-			(project "SolderingStation"
-				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/7e298410-b788-4168-b974-c1c32784a86d"
-					(reference "R15")
 					(unit 1)
 				)
 			)

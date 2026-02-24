@@ -679,6 +679,10 @@
     [
       "9d3e2881-efe6-4275-9d50-896b95215637",
       "Safety Relay"
+    ],
+    [
+      "3176090a-d1e6-4b9f-9b4d-9eed0b9058d1",
+      "Logic Power Supply"
     ]
   ],
   "text_variables": {},

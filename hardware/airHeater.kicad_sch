@@ -1390,6 +1390,12 @@
 		(uuid "16207964-d3d3-4233-8f84-5922e42294a3")
 	)
 	(junction
+		(at 109.22 76.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "6307ac59-c7c3-402f-b3fb-58a2af5df8e9")
+	)
+	(junction
 		(at 130.81 54.61)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1455,6 +1461,16 @@
 	)
 	(wire
 		(pts
+			(xy 109.22 73.66) (xy 109.22 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2af9d076-0f8a-4bdd-b074-862189f4d1ee")
+	)
+	(wire
+		(pts
 			(xy 109.22 86.36) (xy 120.65 86.36)
 		)
 		(stroke
@@ -1472,6 +1488,16 @@
 			(type default)
 		)
 		(uuid "42948f7d-75c3-410d-b399-44e220446d4d")
+	)
+	(wire
+		(pts
+			(xy 109.22 76.2) (xy 109.22 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "46d213ed-37b3-45a6-a485-d76882acc959")
 	)
 	(wire
 		(pts
@@ -1615,6 +1641,16 @@
 	)
 	(wire
 		(pts
+			(xy 109.22 76.2) (xy 120.65 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a7176a3d-4b53-486e-b43f-ab38e24b604d")
+	)
+	(wire
+		(pts
 			(xy 100.33 93.98) (xy 101.6 93.98)
 		)
 		(stroke
@@ -1696,9 +1732,20 @@
 		)
 		(uuid "3cc059fd-76ab-42be-ae3f-9e2156fce10c")
 	)
+	(hierarchical_label "PWM_A+"
+		(shape input)
+		(at 120.65 76.2 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "706ca43c-566e-4a5d-a6dc-86b214e0127d")
+	)
 	(hierarchical_label "24V"
 		(shape input)
-		(at 109.22 77.47 90)
+		(at 109.22 73.66 90)
 		(effects
 			(font
 				(size 1.27 1.27)
