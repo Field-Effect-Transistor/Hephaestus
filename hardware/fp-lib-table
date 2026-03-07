@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "SolderingStationLib")(type "KiCad")(uri "${KIPRJMOD}/library/footprints/SolderingStationLib.pretty")(options "")(descr ""))
+)
