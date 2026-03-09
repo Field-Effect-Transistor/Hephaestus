@@ -2838,7 +2838,7 @@
 		)
 		(uuid "1bc4cba4-7eb4-4008-b9dd-f90cfd6569e4")
 	)
-	(label "COIL"
+	(label "NEUTRAL"
 		(at 57.15 59.69 0)
 		(effects
 			(font
@@ -3248,7 +3248,7 @@
 		)
 		(uuid "b266f6f8-fb5b-47e9-a71d-e59b16cf981b")
 	)
-	(label "NEUTRAL"
+	(label "COIL"
 		(at 57.15 62.23 0)
 		(effects
 			(font
