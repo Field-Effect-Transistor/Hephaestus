@@ -345,7 +345,10 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Device:Crystal_GND24_Small"
+		(symbol "Device:Crystal"
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
 				(offset 1.016)
 				(hide yes)
@@ -356,25 +359,23 @@
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
 			(property "Reference" "Y"
-				(at 1.27 4.445 0)
+				(at 0 3.81 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left)
 				)
 			)
-			(property "Value" "Crystal_GND24_Small"
-				(at 1.27 2.54 0)
+			(property "Value" "Crystal"
+				(at 0 -3.81 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left)
 				)
 			)
 			(property "Footprint" ""
@@ -399,7 +400,7 @@
 					)
 				)
 			)
-			(property "Description" "Four pin crystal, GND on pins 2 and 4, small symbol"
+			(property "Description" "Two pin crystal"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -432,10 +433,10 @@
 					)
 				)
 			)
-			(symbol "Crystal_GND24_Small_0_1"
+			(symbol "Crystal_0_1"
 				(polyline
 					(pts
-						(xy -1.27 1.27) (xy -1.27 1.905) (xy 1.27 1.905) (xy 1.27 1.27)
+						(xy -2.54 0) (xy -1.905 0)
 					)
 					(stroke
 						(width 0)
@@ -447,22 +448,10 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 -0.762) (xy -1.27 0.762)
+						(xy -1.905 -1.27) (xy -1.905 1.27)
 					)
 					(stroke
-						(width 0.381)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -1.27 -1.27) (xy -1.27 -1.905) (xy 1.27 -1.905) (xy 1.27 -1.27)
-					)
-					(stroke
-						(width 0)
+						(width 0.508)
 						(type default)
 					)
 					(fill
@@ -470,10 +459,10 @@
 					)
 				)
 				(rectangle
-					(start -0.762 -1.524)
-					(end 0.762 1.524)
+					(start -1.143 2.54)
+					(end 1.143 -2.54)
 					(stroke
-						(width 0)
+						(width 0.3048)
 						(type default)
 					)
 					(fill
@@ -482,10 +471,22 @@
 				)
 				(polyline
 					(pts
-						(xy 1.27 -0.762) (xy 1.27 0.762)
+						(xy 1.905 -1.27) (xy 1.905 1.27)
 					)
 					(stroke
-						(width 0.381)
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 0) (xy 1.905 0)
+					)
+					(stroke
+						(width 0)
 						(type default)
 					)
 					(fill
@@ -493,9 +494,9 @@
 					)
 				)
 			)
-			(symbol "Crystal_GND24_Small_1_1"
+			(symbol "Crystal_1_1"
 				(pin passive line
-					(at -2.54 0 0)
+					(at -3.81 0 0)
 					(length 1.27)
 					(name "1"
 						(effects
@@ -507,14 +508,14 @@
 					(number "1"
 						(effects
 							(font
-								(size 0.762 0.762)
+								(size 1.27 1.27)
 							)
 						)
 					)
 				)
 				(pin passive line
-					(at 0 -2.54 90)
-					(length 0.635)
+					(at 3.81 0 180)
+					(length 1.27)
 					(name "2"
 						(effects
 							(font
@@ -525,43 +526,7 @@
 					(number "2"
 						(effects
 							(font
-								(size 0.762 0.762)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 2.54 0 180)
-					(length 1.27)
-					(name "3"
-						(effects
-							(font
 								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 0.762 0.762)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 2.54 270)
-					(length 0.635)
-					(name "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 0.762 0.762)
 							)
 						)
 					)
@@ -2383,12 +2348,6 @@
 		(uuid "096c5150-8dff-4c8e-89f0-90fb34491004")
 	)
 	(junction
-		(at 69.85 48.26)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0fba17d9-d5bc-40ae-b0b4-00c28ee0cddd")
-	)
-	(junction
 		(at 95.25 106.68)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2449,10 +2408,10 @@
 		(uuid "b17eb163-1c98-400e-951e-fbc3fd9bef96")
 	)
 	(junction
-		(at 66.04 55.88)
+		(at 66.04 40.64)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "c89b0046-a612-4786-bf05-e72c3dab0e38")
+		(uuid "c53af570-081c-46cd-9fd1-5762fb355bcf")
 	)
 	(junction
 		(at 49.53 33.02)
@@ -2461,10 +2420,10 @@
 		(uuid "ce404436-6c8e-4575-9b89-172950ad50dd")
 	)
 	(junction
-		(at 69.85 40.64)
+		(at 73.66 48.26)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "ec5caa94-8f24-4d54-a352-8b96aae50c9d")
+		(uuid "d5920b84-c3a0-4a99-93f6-643f94b18278")
 	)
 	(junction
 		(at 69.85 55.88)
@@ -2586,7 +2545,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 48.26) (xy 77.47 48.26)
+			(xy 69.85 48.26) (xy 73.66 48.26)
 		)
 		(stroke
 			(width 0)
@@ -2686,16 +2645,6 @@
 	)
 	(wire
 		(pts
-			(xy 74.93 44.45) (xy 74.93 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "17146631-fe78-4c34-8423-5b3bb31290f3")
-	)
-	(wire
-		(pts
 			(xy 58.42 43.18) (xy 58.42 40.64)
 		)
 		(stroke
@@ -2726,6 +2675,16 @@
 	)
 	(wire
 		(pts
+			(xy 113.03 55.88) (xy 115.57 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1c9a78a9-8a5a-4281-a318-e6886a020862")
+	)
+	(wire
+		(pts
 			(xy 74.93 96.52) (xy 77.47 96.52)
 		)
 		(stroke
@@ -2753,6 +2712,16 @@
 			(type default)
 		)
 		(uuid "265f1278-d6a0-457a-ad48-11d685ab36e3")
+	)
+	(wire
+		(pts
+			(xy 66.04 40.64) (xy 77.47 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2697f5ba-4b2b-48d7-bce3-255ec5d70239")
 	)
 	(wire
 		(pts
@@ -2876,13 +2845,13 @@
 	)
 	(wire
 		(pts
-			(xy 66.04 44.45) (xy 67.31 44.45)
+			(xy 66.04 40.64) (xy 66.04 44.45)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "49afdf1e-7129-4ec2-a2d0-fccdb8ec13ab")
+		(uuid "47c7e9e0-a9f9-4248-9a2c-a5802d1b73f1")
 	)
 	(wire
 		(pts
@@ -2916,7 +2885,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 40.64) (xy 77.47 40.64)
+			(xy 58.42 40.64) (xy 66.04 40.64)
 		)
 		(stroke
 			(width 0)
@@ -2926,17 +2895,17 @@
 	)
 	(wire
 		(pts
-			(xy 72.39 44.45) (xy 74.93 44.45)
+			(xy 123.19 58.42) (xy 125.73 58.42)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "5875e442-a4ae-4982-8499-c8c285b807ae")
+		(uuid "5a42f936-ae38-418b-bc6b-a0727082b6f2")
 	)
 	(wire
 		(pts
-			(xy 66.04 55.88) (xy 69.85 55.88)
+			(xy 63.5 55.88) (xy 69.85 55.88)
 		)
 		(stroke
 			(width 0)
@@ -2953,16 +2922,6 @@
 			(type default)
 		)
 		(uuid "5bb0ce4f-43c3-426c-bbc7-68d7665b06a6")
-	)
-	(wire
-		(pts
-			(xy 125.73 58.42) (xy 113.03 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5c24dcf4-5455-479c-a13e-b3a692b37d39")
 	)
 	(wire
 		(pts
@@ -3026,16 +2985,6 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 55.88) (xy 113.03 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "68e15cb3-6c8d-4b55-9368-2dc668e9b2a0")
-	)
-	(wire
-		(pts
 			(xy 180.34 35.56) (xy 180.34 31.75)
 		)
 		(stroke
@@ -3043,6 +2992,16 @@
 			(type default)
 		)
 		(uuid "695d2574-87f5-4404-9f34-9228f3309ec2")
+	)
+	(wire
+		(pts
+			(xy 73.66 44.45) (xy 73.66 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6acfd730-8f0e-418b-8a17-a55877a207d2")
 	)
 	(wire
 		(pts
@@ -3073,6 +3032,16 @@
 			(type default)
 		)
 		(uuid "7138649a-ea12-463b-a572-bdfd718b52da")
+	)
+	(wire
+		(pts
+			(xy 113.03 58.42) (xy 115.57 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "74c22768-ae4e-4a6a-9271-6366510fa23d")
 	)
 	(wire
 		(pts
@@ -3113,16 +3082,6 @@
 			(type default)
 		)
 		(uuid "7c98c6e5-40fe-4d13-9eaa-c8b7ca086caf")
-	)
-	(wire
-		(pts
-			(xy 69.85 40.64) (xy 69.85 41.91)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "81a3bf3d-2d40-439a-8d04-3c333d9d07ec")
 	)
 	(wire
 		(pts
@@ -3196,16 +3155,6 @@
 	)
 	(wire
 		(pts
-			(xy 66.04 44.45) (xy 66.04 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "906b3aac-3a72-4d00-8993-1efd318bfdac")
-	)
-	(wire
-		(pts
 			(xy 115.57 50.8) (xy 115.57 53.34)
 		)
 		(stroke
@@ -3273,16 +3222,6 @@
 			(type default)
 		)
 		(uuid "af32d918-64cc-46a1-92ee-82685a896276")
-	)
-	(wire
-		(pts
-			(xy 58.42 40.64) (xy 69.85 40.64)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b0a5f912-d93a-4a3b-97a1-f8fdf2fd7586")
 	)
 	(wire
 		(pts
@@ -3446,16 +3385,6 @@
 	)
 	(wire
 		(pts
-			(xy 66.04 55.88) (xy 63.5 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e5f7ddde-afa4-4030-a706-3643819b0475")
-	)
-	(wire
-		(pts
 			(xy 180.34 40.64) (xy 180.34 44.45)
 		)
 		(stroke
@@ -3473,6 +3402,26 @@
 			(type default)
 		)
 		(uuid "e851280d-26c0-4347-853e-0fe8ed31482e")
+	)
+	(wire
+		(pts
+			(xy 123.19 55.88) (xy 125.73 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eeac1823-6fb0-41b6-8d1a-7d78ce0e6235")
+	)
+	(wire
+		(pts
+			(xy 73.66 48.26) (xy 77.47 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f435c868-2707-4f13-af83-09759199023e")
 	)
 	(wire
 		(pts
@@ -3513,16 +3462,6 @@
 			(type default)
 		)
 		(uuid "f7827686-933b-45d9-ba82-4ba9bcfe43c7")
-	)
-	(wire
-		(pts
-			(xy 69.85 46.99) (xy 69.85 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fb210fcf-5869-4644-82db-9f12687a4878")
 	)
 	(wire
 		(pts
@@ -4037,7 +3976,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 71.12 79.502 90)
 			(hide yes)
 			(show_name no)
@@ -4061,6 +4000,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 71.12 81.28 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 71.12 81.28 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4196,7 +4146,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 71.12 82.042 90)
 			(hide yes)
 			(show_name no)
@@ -4220,6 +4170,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 71.12 83.82 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 71.12 83.82 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4275,7 +4236,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 159.512 78.74 90)
 			(hide yes)
 			(show_name no)
@@ -4298,6 +4259,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 161.29 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
 			(at 161.29 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -4357,7 +4329,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 190.5 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -4380,6 +4352,17 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 190.5 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
 			(at 190.5 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -4439,7 +4422,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 153.67 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -4472,6 +4455,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 153.67 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "31b38950-b884-4483-8231-872db521ff20")
 		)
@@ -4482,93 +4476,6 @@
 			(project "SolderingStation"
 				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/5a035b4b-62d0-4441-818e-0b4903df68f5"
 					(reference "C16")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:Crystal_GND24_Small")
-		(at 69.85 44.45 270)
-		(mirror x)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "1f8d8dc5-f8fd-4fc8-970f-d8be1f0ebca9")
-		(property "Reference" "Y2"
-			(at 83.82 50.1718 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "Crystal_GND24_Small"
-			(at 69.088 39.878 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
-			(at 69.85 44.45 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 69.85 44.45 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Four pin crystal, GND on pins 2 and 4, small symbol"
-			(at 69.85 44.45 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "ad316473-e3db-4138-9b95-d783dfbccb40")
-		)
-		(pin "4"
-			(uuid "ab53532b-4e0f-4079-888a-474fc3a2ffcf")
-		)
-		(pin "3"
-			(uuid "21845976-ff09-476f-9bad-d15a7ea52a95")
-		)
-		(pin "2"
-			(uuid "d13a7851-8d3e-4177-82b4-6a8e3963a134")
-		)
-		(instances
-			(project "SolderingStation"
-				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/5a035b4b-62d0-4441-818e-0b4903df68f5"
-					(reference "Y2")
 					(unit 1)
 				)
 			)
@@ -4844,7 +4751,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 119.38 46.482 90)
 			(hide yes)
 			(show_name no)
@@ -4868,6 +4775,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 119.38 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 119.38 48.26 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4926,7 +4844,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 58.42 45.72 0)
 			(hide yes)
 			(show_name no)
@@ -4949,6 +4867,17 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 58.42 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C1653 "
 			(at 58.42 45.72 0)
 			(hide yes)
 			(show_name no)
@@ -5007,7 +4936,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 71.12 89.662 90)
 			(hide yes)
 			(show_name no)
@@ -5040,6 +4969,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C21190"
+			(at 71.12 91.44 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "c005b032-46a9-4ee2-a4f4-29d1ecda4d88")
 		)
@@ -5050,6 +4990,97 @@
 			(project "SolderingStation"
 				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/5a035b4b-62d0-4441-818e-0b4903df68f5"
 					(reference "R29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:Crystal")
+		(at 69.85 44.45 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3653bd97-70a5-4f51-8695-e7829832ab45")
+		(property "Reference" "Y1"
+			(at 69.85 36.83 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "X50328MSB2GI"
+			(at 69.85 39.37 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Crystal:Crystal_SMD_5032-2Pin_5.0x3.2mm"
+			(at 69.85 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 69.85 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Two pin crystal"
+			(at 69.85 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C115962"
+			(at 69.85 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "c835ebdd-1aa3-4cb5-b693-651198c465d9")
+		)
+		(pin "1"
+			(uuid "1181ecae-2263-4837-a122-1e9aab64b52b")
+		)
+		(instances
+			(project "SolderingStation"
+				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/5a035b4b-62d0-4441-818e-0b4903df68f5"
+					(reference "Y1")
 					(unit 1)
 				)
 			)
@@ -5088,7 +5119,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 26.162 68.58 90)
 			(hide yes)
 			(show_name no)
@@ -5111,6 +5142,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 27.94 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
 			(at 27.94 68.58 0)
 			(hide yes)
 			(show_name no)
@@ -5248,7 +5290,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 71.12 97.282 90)
 			(hide yes)
 			(show_name no)
@@ -5272,6 +5314,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 71.12 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 71.12 99.06 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5330,7 +5383,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 171.45 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -5353,6 +5406,17 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 171.45 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
 			(at 171.45 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -5400,7 +5464,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "S8050"
+		(property "Value" "2N2222"
 			(at 170.942 90.17 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5411,7 +5475,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-3"
+		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
 			(at 171.45 90.805 0)
 			(hide yes)
 			(show_name no)
@@ -5437,6 +5501,17 @@
 			)
 		)
 		(property "Description" "0.7A Ic, 20V Vce, Low Voltage High Current NPN Transistor, TO-92"
+			(at 166.37 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2146"
 			(at 166.37 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -5499,7 +5574,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 67.31 67.818 90)
 			(hide yes)
 			(show_name no)
@@ -5522,6 +5597,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 67.31 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
 			(at 67.31 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -5738,7 +5824,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 71.12 94.742 90)
 			(hide yes)
 			(show_name no)
@@ -5762,6 +5848,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 71.12 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 71.12 96.52 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5899,7 +5996,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 69.85 52.07 0)
 			(hide yes)
 			(show_name no)
@@ -5922,6 +6019,17 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 69.85 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C1653 "
 			(at 69.85 52.07 0)
 			(hide yes)
 			(show_name no)
@@ -6059,7 +6167,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 113.792 69.85 90)
 			(hide yes)
 			(show_name no)
@@ -6082,6 +6190,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 115.57 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
 			(at 115.57 69.85 0)
 			(hide yes)
 			(show_name no)
@@ -6140,7 +6259,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 119.38 41.402 90)
 			(hide yes)
 			(show_name no)
@@ -6164,6 +6283,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 119.38 43.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 119.38 43.18 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6246,6 +6376,17 @@
 			)
 		)
 		(property "Description" "STMicroelectronics Arm Cortex-M3 MCU, 64KB flash, 20KB RAM, 72 MHz, 2.0-3.6V, 37 GPIO, LQFP48"
+			(at 95.25 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" ""
 			(at 95.25 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -6442,7 +6583,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 71.12 92.202 90)
 			(hide yes)
 			(show_name no)
@@ -6466,6 +6607,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 71.12 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 71.12 93.98 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6523,7 +6675,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 121.412 72.39 90)
 			(hide yes)
 			(show_name no)
@@ -6546,6 +6698,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 123.19 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
 			(at 123.19 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -6638,6 +6801,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 171.45 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "17d1ec13-09dd-4f82-a177-e4eeac1d60dd")
 		)
@@ -6686,7 +6860,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 119.38 31.242 90)
 			(hide yes)
 			(show_name no)
@@ -6710,6 +6884,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 119.38 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 119.38 33.02 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6815,6 +7000,98 @@
 	)
 	(symbol
 		(lib_id "Device:R")
+		(at 119.38 55.88 90)
+		(mirror x)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a0472683-31f8-4763-86c7-ab8c1dbac801")
+		(property "Reference" "R41"
+			(at 119.38 50.8 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 119.38 55.88 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 119.38 54.102 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 119.38 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 119.38 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 119.38 55.88 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "1e784e0d-5a9b-4651-81cb-65960d957e62")
+		)
+		(pin "1"
+			(uuid "3cc72064-4731-4dad-8975-5fe217af6720")
+		)
+		(instances
+			(project "SolderingStation"
+				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/5a035b4b-62d0-4441-818e-0b4903df68f5"
+					(reference "R41")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
 		(at 119.38 35.56 90)
 		(mirror x)
 		(unit 1)
@@ -6846,7 +7123,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 119.38 33.782 90)
 			(hide yes)
 			(show_name no)
@@ -6870,6 +7147,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 119.38 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 119.38 35.56 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6928,7 +7216,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_PUSH_4.5mm"
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm_H8mm"
 			(at 49.53 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -6952,6 +7240,17 @@
 		)
 		(property "Description" "Single Pole Single Throw (SPST) switch"
 			(at 49.53 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" ""
+			(at 49.53 44.45 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7010,7 +7309,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 40.64 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -7033,6 +7332,17 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 40.64 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
 			(at 40.64 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -7092,7 +7402,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 162.56 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -7115,6 +7425,17 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 162.56 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
 			(at 162.56 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -7252,7 +7573,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 119.38 49.022 90)
 			(hide yes)
 			(show_name no)
@@ -7276,6 +7597,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 119.38 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 119.38 50.8 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7331,7 +7663,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 31.75 39.878 90)
 			(hide yes)
 			(show_name no)
@@ -7364,6 +7696,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C25804"
+			(at 31.75 38.1 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "65de7584-2554-4754-9cf1-8a09746f1e0c")
 		)
@@ -7374,6 +7717,98 @@
 			(project "SolderingStation"
 				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/5a035b4b-62d0-4441-818e-0b4903df68f5"
 					(reference "R7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 119.38 58.42 90)
+		(mirror x)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "e759f312-de39-474d-b0bc-d9641a5e3007")
+		(property "Reference" "R42"
+			(at 119.38 53.34 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 119.38 58.42 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 119.38 56.642 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 119.38 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 119.38 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 119.38 58.42 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "2069e30f-cf8f-46e5-9df9-6972b0c89ac1")
+		)
+		(pin "1"
+			(uuid "abb1ad47-9da3-4e2a-b592-79ba00a86be5")
+		)
+		(instances
+			(project "SolderingStation"
+				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/5a035b4b-62d0-4441-818e-0b4903df68f5"
+					(reference "R42")
 					(unit 1)
 				)
 			)
@@ -7412,7 +7847,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 33.782 68.58 90)
 			(hide yes)
 			(show_name no)
@@ -7435,6 +7870,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 35.56 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
 			(at 35.56 68.58 0)
 			(hide yes)
 			(show_name no)
@@ -7494,7 +7940,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 180.34 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -7517,6 +7963,17 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 180.34 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
 			(at 180.34 38.1 0)
 			(hide yes)
 			(show_name no)

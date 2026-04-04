@@ -1,0 +1,50 @@
+﻿Designator,Footprint,Quantity,Value,LCSC Part #
+BZ1,Buzzer_12x9.5RM7.6,1,Buzzer,
+"C1, C12, C14, C15, C16, C17, C18, C19, C2, C20, C6, C7, C8",0805,13,0.1u,C14663
+"C10, C9",0805,2,22pF,C1653 
+"C11, C21",CP_Radial_D6.3mm_P2.50mm,2,100uF,
+"C13, C3",CP_Radial_D5.0mm_P2.00mm,2,10uF,
+C4,1206,1,10uF,C13585
+C5,0805,1,1uF,C1634
+C8_2,CP_EIA-3216-18_Kemet-A,1,22uF,
+"D1, D2",D_SMA,2,SS54,C22452
+D3,D_DO-35_SOD27_P2.54mm_Vertical_AnodeUp,1,BZT52C12,
+D4,D_SOD-123F,1,1N4148,C2128
+D5,D_DO-35_SOD27_P2.54mm_Vertical_AnodeUp,1,BZT52C3V3,
+"D6, D7, D8",0805,3,LED,C2286
+GX12,GX-12-5,1,Soldering Iron,
+GX16,GX-16-8,1,Hot Air,
+J1,TerminalBlock_MaiXu_MX126-5.0-03P_1x03_P5.00mm,1,AC Screw Terminal,
+J10,TerminalBlock_MaiXu_MX126-5.0-03P_1x03_P5.00mm,1,Power,
+"J11, J9",PinHeader_1x02_P2.54mm_Vertical,2,Logic,
+J12,PinHeader_1x04_P2.54mm_Vertical,1,SWD,
+J13,TerminalBlock_MaiXu_MX126-5.0-02P_1x02_P5.00mm,1,Relay Contact,
+J14,TerminalBlock_MaiXu_MX126-5.0-02P_1x02_P5.00mm,1,Relay Coil,
+J2,PinHeader_1x05_P2.54mm_Vertical,1,Iron Encoder,
+J3,PinHeader_1x05_P2.54mm_Vertical,1,Hot Air Encoder,
+J4,PinHeader_1x04_P2.54mm_Vertical,1,OLED,
+J5,TerminalBlock_MaiXu_MX126-5.0-02P_1x02_P5.00mm,1,High Voltage,
+J6,PinHeader_1x04_P2.54mm_Vertical,1,UART,
+J7,PinHeader_1x03_P2.54mm_Vertical,1,STM BOOT,
+J8,TerminalBlock_MaiXu_MX126-5.0-03P_1x03_P5.00mm,1,+5V,
+JP1,PinHeader_1x03_P2.54mm_Vertical,1,Jumper_2_Open,
+"Q1, Q4",TO-220-3_Vertical,2,IRLZ44N,
+"Q2, Q3, Q5",TO-92_Inline,3,2N2222,C2146
+Q7,TO-220-3_Vertical,1,BTA16-600B,
+"R1, R3",0805,2,300,C23025
+"R10, R16",R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal,2,3k,
+"R11, R39",0805,2,2.2k,C4190
+"R12, R15, R17, R18, R19, R20, R22, R23, R29, R30, R31, R32, R33, R34, R35, R38, R41, R42",0805,18,1k,C21190
+"R13, R14, R2, R21, R26, R28, R36, R37, R40, R6, R7, R8, R9",0805,13,10k,C25804
+"R24, R27",0805,2,100k,C25803
+R25,0805,1,200k,C25811
+"R4, R5",R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal,2,390/0.5W,
+SW1,SW_PUSH_6mm_H8mm,1,SW_SPST,
+SW2,TerminalBlock_MaiXu_MX126-5.0-02P_1x02_P5.00mm,1,SW_SPST,
+SW3,PinHeader_1x02_P2.54mm_Vertical,1,SW_SPST,
+U1,DIP-6_W7.62mm_LongPads,1,MOC3063M,
+"U2, U4",SOT-223-3_TabPin2,2,AMS1117-3.3,C6186 
+U5,LQFP-48_7x7mm_P0.5mm,1,STM32F103C8Tx,
+U6,SOIC-8_3.9x4.9mm_P1.27mm,1,MCP6002-xSN,
+U7,MSOP-10_3x3mm_P0.5mm,1,ADS1115,
+Y1,Crystal_SMD_5032-2Pin_5.0x3.2mm,1,X50328MSB2GI,C115962

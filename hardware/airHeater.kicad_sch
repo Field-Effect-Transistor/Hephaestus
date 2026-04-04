@@ -741,7 +741,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "SolderingStationLib:60T03H"
+		(symbol "Transistor_FET:Q_NMOS_GDS"
 			(pin_names
 				(offset 0)
 				(hide yes)
@@ -762,7 +762,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "60T03H"
+			(property "Value" "Q_NMOS_GDS"
 				(at 5.08 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -817,7 +817,7 @@
 					)
 				)
 			)
-			(symbol "60T03H_0_1"
+			(symbol "Q_NMOS_GDS_0_1"
 				(polyline
 					(pts
 						(xy 0.254 1.905) (xy 0.254 -1.905)
@@ -984,7 +984,7 @@
 					)
 				)
 			)
-			(symbol "60T03H_1_1"
+			(symbol "Q_NMOS_GDS_1_1"
 				(pin input line
 					(at -5.08 0 0)
 					(length 2.54)
@@ -2013,6 +2013,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 121.92 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "8f39d3a8-0f21-4140-ae17-7579618abd23")
 		)
@@ -2177,6 +2188,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 130.81 40.64 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "e6062fd2-e9f3-4e60-bb80-7ade962f48fa")
 		)
@@ -2190,91 +2212,6 @@
 			(project "SolderingStation"
 				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/521a69e4-8121-48bb-87b1-847743f69fdd"
 					(reference "Q7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "SolderingStationLib:60T03H")
-		(at 106.68 93.98 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5375dd5e-22d4-4ec4-b126-6d2509128941")
-		(property "Reference" "Q6"
-			(at 113.03 92.7099 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "AO3400A"
-			(at 113.03 95.2499 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 111.76 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 106.68 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "N-MOSFET transistor, gate/drain/source"
-			(at 106.68 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "3"
-			(uuid "d09572f1-0321-4af1-9f7e-c2365f91fb61")
-		)
-		(pin "1"
-			(uuid "848fd65b-672c-43a7-aaeb-c649298426f4")
-		)
-		(pin "2"
-			(uuid "0f257eac-d8e2-4b32-adc9-88450604b8fe")
-		)
-		(instances
-			(project "SolderingStation"
-				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/521a69e4-8121-48bb-87b1-847743f69fdd"
-					(reference "Q6")
 					(unit 1)
 				)
 			)
@@ -2311,7 +2248,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 85.09 39.878 90)
 			(hide yes)
 			(show_name no)
@@ -2335,6 +2272,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 85.09 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C23025"
+			(at 85.09 38.1 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2505,6 +2453,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C22452"
+			(at 109.22 81.28 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "d9f533c4-998b-479b-894b-62ecad8c17a3")
 		)
@@ -2588,6 +2547,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 104.14 40.64 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "ebcceb8f-0f9d-456c-924b-2abc2ec8674b")
 		)
@@ -2646,7 +2616,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 96.52 95.758 90)
 			(hide yes)
 			(show_name no)
@@ -2670,6 +2640,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 96.52 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C23025"
+			(at 96.52 93.98 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2727,7 +2708,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 88.392 100.33 90)
 			(hide yes)
 			(show_name no)
@@ -2760,6 +2741,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C25804"
+			(at 90.17 100.33 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "58e42b8d-308a-4149-b125-aedd67a25d14")
 		)
@@ -2770,6 +2762,102 @@
 			(project "SolderingStation"
 				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/521a69e4-8121-48bb-87b1-847743f69fdd"
 					(reference "R2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:Q_NMOS_GDS")
+		(at 106.68 93.98 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bff47f3b-93d0-4ccc-bef1-c15ae897427b")
+		(property "Reference" "Q4"
+			(at 113.03 92.7099 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "IRLZ44N"
+			(at 113.03 95.2499 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_THT:TO-220-3_Vertical"
+			(at 111.76 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 106.68 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "N-MOSFET transistor, gate/drain/source"
+			(at 106.68 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" ""
+			(at 106.68 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "3"
+			(uuid "b345e267-178c-4c29-8b6a-6608aff51d80")
+		)
+		(pin "1"
+			(uuid "640fcc29-7227-4cbb-9d13-a7f97f3affe2")
+		)
+		(pin "2"
+			(uuid "1571daff-9465-40fe-8fba-87421c888804")
+		)
+		(instances
+			(project "SolderingStation"
+				(path "/23f2f192-8d8a-4d18-9a9e-f5d6a1224b2d/521a69e4-8121-48bb-87b1-847743f69fdd"
+					(reference "Q4")
 					(unit 1)
 				)
 			)
@@ -2830,6 +2918,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 121.92 34.29 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" ""
+			(at 121.92 34.29 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

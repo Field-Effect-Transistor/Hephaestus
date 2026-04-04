@@ -3158,6 +3158,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 175.26 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "3760f21f-83ce-4525-a65e-7cebe1c8d614")
 		)
@@ -3241,6 +3252,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 91.44 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "A2"
 			(uuid "6dd22cf0-40e4-4917-b234-3a94f8fdefe1")
 		)
@@ -3296,7 +3318,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 78.232 67.31 90)
 			(hide yes)
 			(show_name no)
@@ -3319,6 +3341,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 80.01 67.31 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
 			(at 80.01 67.31 0)
 			(hide yes)
 			(show_name no)
@@ -3408,6 +3441,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 175.26 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "cdd8c44b-33d0-4938-9926-502be9930ef7")
 		)
@@ -3448,7 +3492,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "S8050"
+		(property "Value" "2N2222"
 			(at 98.552 62.23 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3459,7 +3503,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-3"
+		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
 			(at 99.06 62.865 0)
 			(hide yes)
 			(show_name no)
@@ -3485,6 +3529,17 @@
 			)
 		)
 		(property "Description" "0.7A Ic, 20V Vce, Low Voltage High Current NPN Transistor, TO-92"
+			(at 93.98 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2146"
 			(at 93.98 60.96 0)
 			(hide yes)
 			(show_name no)
@@ -3580,6 +3635,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 114.3 60.96 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "649142bd-118c-49a2-b62a-7153d020e21a")
 		)
@@ -3649,6 +3715,17 @@
 			)
 		)
 		(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 175.26 38.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" ""
 			(at 175.26 38.1 0)
 			(hide yes)
 			(show_name no)
@@ -3923,6 +4000,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C2128"
+			(at 114.3 41.91 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "a0d697f1-e983-4e74-93b1-8b46d1dc94d1")
 		)
@@ -4005,6 +4093,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 73.66 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "8d915a8d-128b-4bfb-b686-9a8554e06561")
 		)
@@ -4053,7 +4152,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 55.88 77.978 90)
 			(hide yes)
 			(show_name no)
@@ -4077,6 +4176,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 55.88 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 55.88 76.2 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4168,6 +4278,17 @@
 				)
 			)
 		)
+		(property "LCSC" ""
+			(at 41.91 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "742c0e42-46b9-486b-9b7b-690248d42d26")
 		)
@@ -4241,6 +4362,17 @@
 		)
 		(property "Description" "Single Pole Single Throw (SPST) switch"
 			(at 49.53 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" ""
+			(at 49.53 41.91 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4401,6 +4533,17 @@
 			)
 		)
 		(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 105.41 40.64 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" ""
 			(at 105.41 40.64 0)
 			(hide yes)
 			(show_name no)
