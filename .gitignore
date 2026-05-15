@@ -1,9 +1,3 @@
-# PlatformIO
-.pio/
-.vscode/
-*.bin
-*.elf
-
 # KiCad
 *.lck
 *.kicad_prl
@@ -17,3 +11,6 @@ fp-info-cache
 
 # Documentation
 ~$*.docx
+
+# Firmware
+firmware/build/
