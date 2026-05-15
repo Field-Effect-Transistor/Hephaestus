@@ -6326,7 +6326,7 @@
 		)
 	)
 	(sheet
-		(at 228.6 125.73)
+		(at 245.11 157.48)
 		(size 35.56 15.24)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6342,7 +6342,7 @@
 		)
 		(uuid "9d3e2881-efe6-4275-9d50-896b95215637")
 		(property "Sheetname" "Safety Relay"
-			(at 228.6 125.0184 0)
+			(at 245.11 156.7684 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6353,7 +6353,7 @@
 			)
 		)
 		(property "Sheetfile" "safetyRelay.kicad_sch"
-			(at 228.6 141.5546 0)
+			(at 245.11 173.3046 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
