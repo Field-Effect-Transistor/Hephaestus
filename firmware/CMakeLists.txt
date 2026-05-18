@@ -47,6 +47,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     App/Src/app.cpp
     App/Src/system/exti_registry.cpp
+    App/Src/system/logger/logger.cpp
     #App/Src/rotary_encoder.cpp
 )
 
@@ -60,6 +61,10 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
     Drivers/CMSIS/Device/ST/STM32F1xx/Include
     Drivers/CMSIS/Include
+
+    Middlewares/Third_Party/FreeRTOS/Source/include
+    Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
+    Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
 )
 
 # Add project symbols (macros)

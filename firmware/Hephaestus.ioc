@@ -2,8 +2,9 @@
 CAD.formats=[]
 CAD.pinconfig=Dual
 CAD.provider=Component Search Engine
-FREERTOS.IPParameters=Tasks01
+FREERTOS.IPParameters=Tasks01,configTOTAL_HEAP_SIZE
 FREERTOS.Tasks01=defaultTask,24,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL
+FREERTOS.configTOTAL_HEAP_SIZE=10240
 File.Version=6
 GPIO.groupedBy=Group By Peripherals
 I2C1.I2C_Mode=I2C_Fast
