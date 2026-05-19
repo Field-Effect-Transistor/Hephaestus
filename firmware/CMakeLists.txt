@@ -48,6 +48,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/Src/app.cpp
     App/Src/system/exti_registry.cpp
     App/Src/system/logger/logger.cpp
+    App/Src/system/button.cpp
     #App/Src/rotary_encoder.cpp
 )
 

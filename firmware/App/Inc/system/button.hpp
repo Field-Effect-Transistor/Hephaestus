@@ -1,34 +1,89 @@
-//  App/Inc/system/button.hpp
 #pragma once
+#include <cstdint>
 
-#include "FreeRTOS.h"
-#include "queue.h"
-
-//#include "exti_registry.hpp"
+/*
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                        BUTTON STATE MACHINE                               ║
+╠═══════════════════════════════════════════════════════════════════════════╣
+║                                                                           ║
+║                            ┌─────────┐                                    ║
+║                            │  Idle   │◄──────────────────────┐            ║
+║                            └────┬────┘                       │            ║
+║                                 │ pressed                    │            ║
+║                                 ▼                            │            ║
+║                         ┌───────────────┐                    │            ║
+║              bounce ───►│ DebouncePress │                    │            ║
+║                         └───────┬───────┘                    │            ║
+║                                 │ ok  ★Pressed               │            ║
+║                                 ▼                            │            ║
+║                            ┌─────────┐                       │            ║
+║               ┌────────────│ Pressed │────────────┐          │            ║
+║               │ released   └─────────┘  ≥800ms    │          │            ║
+║               ▼                             ▼  ★LongPress    │            ║
+║         ┌────────────┐               ┌──────────┐            │            ║
+║         │ WaitDouble │               │   Hold   │──┐         │            ║
+║         └──────┬─────┘               └────┬─────┘  │≥100ms   │            ║
+║    ≥250ms │    │ pressed                  │        │★Repeat  │            ║
+║  ★Single  │    ▼                          │released└─────────┘            ║
+║    Click  │  ┌──────────────────┐         ▼                               ║
+║           │  │DebounceSecondPrs │   ┌─────────────────┐                   ║
+║           │  └────────┬─────────┘   │ DebounceRelease │                   ║
+║           │  ok│      │bounce       └────────┬────────┘                   ║
+║           │   ★│      └──►WaitDouble  ok│     │bounce                     ║ 
+║           │DoubleClick                  │★    └──►Hold                    ║
+║           │    ▼                     Released                             ║
+║           │  ┌────────────────┐         │                                 ║
+║           │  │ ConsumeRelease │         │                                 ║
+║           │  └───────┬────────┘         │                                 ║
+║           │ released │                  │                                 ║
+║           └──────────┴──────────────────┘                                 ║
+║                               │                                           ║
+║                               ▼                                           ║
+║                            ┌─────────┐                                    ║
+║                            │  Idle   │                                    ║
+║                            └─────────┘                                    ║
+║                                                                           ║
+║  ★ = подія що генерується                                                 ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+*/
 
 namespace Hephaestus {
-    struct ButtonEvent {
-        uint32_t    timestamp_ms;
+
+    enum class ButtonEvent {
+        None,
+        Pressed,
+        Released,
+        SingleClick,
+        DoubleClick,
+        LongPress,
+        LongPressRepeat
     };
 
     class Button {
     private:
-        uint16_t        _pin;
-        QueueHandle_t   _queue;
+        enum class State {
+            Idle,
+            DebouncePress,
+            Pressed,
+            WaitDouble,
+            DebounceSecondPress,
+            ConsumeRelease,
+            DebounceRelease,
+            Hold
+        };
 
-        static void on_exti(void* constext);
+        State    _state = State::Idle;
+        uint32_t _lastStateChangeTime = 0;
+        uint32_t _lastRepeatTime = 0;
+
+        const uint32_t _debounceTimeMs     = 20;
+        const uint32_t _doubleClickWaitMs  = 250;
+        const uint32_t _longPressMs        = 800;
+        const uint32_t _longPressRepeatMs  = 100;
 
     public:
-        QueueHandle_t get_queue() const { return _queue; }
+        Button() = default;
+        ButtonEvent update(bool is_pressed, uint32_t tick_ms);
+    };
 
-        Button(uint16_t pin, uint8_t queue_depth = 4);
-        ~Button();
-
-        Button(Button&&) = delete;
-        Button(const Button&) = delete;
-
-        Button& operator=(const Button&) = delete;
-        Button& operator=(Button&&) = delete;
-
-    };  //  class Button
-}   //  namespace Hephaesus
+} // namespace Hephaestus
