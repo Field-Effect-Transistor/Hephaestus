@@ -8,6 +8,8 @@
 #include "system/logger/uart_log_sink.hpp"
 #include "system/button.hpp"
 #include "system/encoder.hpp"
+#include "system/heater_channel.hpp"
+#include "system/display_manager.hpp"
 
 static Hephaestus::UARTLogSink uartLogSink(&huart1);
 
@@ -17,9 +19,25 @@ static Hephaestus::Button airBtn;  // PB13
 static Hephaestus::Encoder ironEncoder(&htim2); // PA0, PA1
 static Hephaestus::Encoder airEncoder(&htim4);  // PB6, PB7
 
+static Hephaestus::HeaterChannel ironChannel("IRON", 300, 100, 450, 150);
+static Hephaestus::HeaterChannel airChannel("AIR", 300, 100, 500, 50);
+
+static Hephaestus::DisplayManager display;
+
 void appLoopTask(void*) {
     for(;;) {
         app_loop();
+    }
+}
+
+void displayTask(void* params) {
+    display.init();
+    Hephaestus::Logger::info("SYS", "Display initialized");
+
+    for(;;) {
+        display.update(ironChannel, airChannel);
+        
+        vTaskDelay(pdMS_TO_TICKS(80));
     }
 }
 
@@ -30,45 +48,33 @@ extern "C" void app_setup() {
     ironEncoder.init();
     airEncoder.init();
 
-    xTaskCreate(
-        Hephaestus::Logger::taskLoop, 
-        "LoggerTask", 
-        256,
-        nullptr,
-        tskIDLE_PRIORITY + 1,
-        nullptr
-    );
+    xTaskCreate(Hephaestus::Logger::taskLoop, "LoggerTask", 256, nullptr, tskIDLE_PRIORITY + 1, nullptr);
 
-    xTaskCreate(
-        appLoopTask,
-        "app loop task",
-        256,
-        nullptr,
-        tskIDLE_PRIORITY,
-        nullptr
-    );
+    xTaskCreate(displayTask, "DisplayTask", 384, nullptr, tskIDLE_PRIORITY + 2, nullptr);
+
+    xTaskCreate(appLoopTask, "app loop task", 256, nullptr, tskIDLE_PRIORITY + 3, nullptr);
 
     Hephaestus::Logger::info("SYS", "Hephaestus Soldering Station Booted!");
-    Hephaestus::Logger::debug("SYS", "SystemCoreClock: %lu MHz", SystemCoreClock / 1000000);
 }
 
-static void logButtonEvent(const char* btnName, Hephaestus::ButtonEvent event) {
+static void handleButton(Hephaestus::HeaterChannel& channel, Hephaestus::ButtonEvent event) {
     using namespace Hephaestus;
-    switch (event) {
-        case ButtonEvent::SingleClick:
-            Logger::info("INPUT", "[%s] SINGLE CLICK", btnName);
-            break;
-        case ButtonEvent::DoubleClick:
-            Logger::info("INPUT", "[%s] DOUBLE CLICK", btnName);
-            break;
-        case ButtonEvent::LongPress:
-            Logger::info("INPUT", "[%s] HOLD START", btnName);
-            break;
-        case ButtonEvent::LongPressRepeat:
-            Logger::debug("INPUT", "[%s] Holding...", btnName);
-            break;
-        default:
-            break;
+    if (event == ButtonEvent::SingleClick) {
+        channel.toggleState(); // Увімкнути/Вимкнути
+    } 
+    else if (event == ButtonEvent::DoubleClick || event == ButtonEvent::LongPress) {
+        channel.setState(ChannelState::Sleep); // Відправити спати
+    }
+}
+
+static void handleEncoder(Hephaestus::HeaterChannel& channel, Hephaestus::EncoderResult enc, bool isPressed) {
+    if (!enc.hasMovement()) return;
+
+    if (isPressed) {
+        int16_t direction = (enc.raw > 0) ? 1 : -1;
+        channel.changeTargetTemp(direction * 50);
+    } else {
+        channel.changeTargetTemp(enc.accelerated);
     }
 }
 
@@ -80,27 +86,14 @@ extern "C" void app_loop() {
 
     Hephaestus::ButtonEvent ironEvent = ironBtn.update(isIronPressed, tick);
     Hephaestus::ButtonEvent airEvent  = airBtn.update(isAirPressed, tick);
-
-    logButtonEvent("IRON", ironEvent);
-    logButtonEvent("AIR ", airEvent);
-
     Hephaestus::EncoderResult ironEnc = ironEncoder.getSteps();
-    if (ironEnc.hasMovement()) {
-        if (isIronPressed) {
-            Hephaestus::Logger::info("INPUT", "[IRON ENC] Push & Turn! Raw: %d", ironEnc.raw);
-        } else {
-            Hephaestus::Logger::info("INPUT", "[IRON ENC] Raw: %d | Accel: %d", ironEnc.raw, ironEnc.accelerated);
-        }
-    }
+    Hephaestus::EncoderResult airEnc  = airEncoder.getSteps();
 
-    Hephaestus::EncoderResult airEnc = airEncoder.getSteps();
-    if (airEnc.hasMovement()) {
-        if (isAirPressed) {
-            Hephaestus::Logger::info("INPUT", "[AIR ENC] Push & Turn! Raw: %d", airEnc.raw);
-        } else {
-            Hephaestus::Logger::info("INPUT", "[AIR ENC] Raw: %d | Accel: %d", airEnc.raw, airEnc.accelerated);
-        }
-    }
+    handleButton(ironChannel, ironEvent);
+    handleButton(airChannel, airEvent);
+
+    handleEncoder(ironChannel, ironEnc, isIronPressed);
+    handleEncoder(airChannel, airEnc, isAirPressed);
 
     vTaskDelay(pdMS_TO_TICKS(15));
 }

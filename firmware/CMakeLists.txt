@@ -42,6 +42,10 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
 )
 
+file(GLOB_RECURSE U8G2_SOURCES
+    "${CMAKE_SOURCE_DIR}/Libs/u8g2/csrc/*.c"
+)
+
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
@@ -51,6 +55,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/Src/system/logger/uart_log_sink.cpp
     App/Src/system/button.cpp
     App/Src/system/encoder.cpp
+    App/Src/system/heater_channel.cpp
+    App/Src/system/display_manager.cpp
+
+    ${U8G2_SOURCES}
     #App/Src/rotary_encoder.cpp
 )
 
@@ -68,6 +76,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Middlewares/Third_Party/FreeRTOS/Source/include
     Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
     Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
+
+    ${CMAKE_SOURCE_DIR}/Libs/u8g2/csrc
 )
 
 # Add project symbols (macros)
