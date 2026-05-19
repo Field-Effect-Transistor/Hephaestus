@@ -2,15 +2,20 @@
 #include "app.hpp"
 #include "usart.h"
 #include "gpio.h"
+#include "tim.h"
 
 #include "system/logger/logger.hpp"
 #include "system/logger/uart_log_sink.hpp"
 #include "system/button.hpp"
+#include "system/encoder.hpp"
 
 static Hephaestus::UARTLogSink uartLogSink(&huart1);
 
 static Hephaestus::Button ironBtn; // PB12
 static Hephaestus::Button airBtn;  // PB13
+
+static Hephaestus::Encoder ironEncoder(&htim2); // PA0, PA1
+static Hephaestus::Encoder airEncoder(&htim4);  // PB6, PB7
 
 void appLoopTask(void*) {
     for(;;) {
@@ -21,6 +26,9 @@ void appLoopTask(void*) {
 extern "C" void app_setup() {
     Hephaestus::Logger::init();
     Hephaestus::Logger::addSink(&uartLogSink);
+
+    ironEncoder.init();
+    airEncoder.init();
 
     xTaskCreate(
         Hephaestus::Logger::taskLoop, 
@@ -75,6 +83,24 @@ extern "C" void app_loop() {
 
     logButtonEvent("IRON", ironEvent);
     logButtonEvent("AIR ", airEvent);
+
+    Hephaestus::EncoderResult ironEnc = ironEncoder.getSteps();
+    if (ironEnc.hasMovement()) {
+        if (isIronPressed) {
+            Hephaestus::Logger::info("INPUT", "[IRON ENC] Push & Turn! Raw: %d", ironEnc.raw);
+        } else {
+            Hephaestus::Logger::info("INPUT", "[IRON ENC] Raw: %d | Accel: %d", ironEnc.raw, ironEnc.accelerated);
+        }
+    }
+
+    Hephaestus::EncoderResult airEnc = airEncoder.getSteps();
+    if (airEnc.hasMovement()) {
+        if (isAirPressed) {
+            Hephaestus::Logger::info("INPUT", "[AIR ENC] Push & Turn! Raw: %d", airEnc.raw);
+        } else {
+            Hephaestus::Logger::info("INPUT", "[AIR ENC] Raw: %d | Accel: %d", airEnc.raw, airEnc.accelerated);
+        }
+    }
 
     vTaskDelay(pdMS_TO_TICKS(15));
 }
