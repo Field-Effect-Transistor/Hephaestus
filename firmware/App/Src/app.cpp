@@ -11,6 +11,10 @@
 #include "system/heater_channel.hpp"
 #include "system/display_manager.hpp"
 
+#include "system/i2c_arbiter.hpp"
+
+SemaphoreHandle_t Hephaestus::i2c1Mutex = nullptr;
+
 static Hephaestus::UARTLogSink uartLogSink(&huart1);
 
 static Hephaestus::Button ironBtn; // PB12
@@ -42,6 +46,8 @@ void displayTask(void* params) {
 }
 
 extern "C" void app_setup() {
+    Hephaestus::i2c1Mutex = xSemaphoreCreateMutex();
+    
     Hephaestus::Logger::init();
     Hephaestus::Logger::addSink(&uartLogSink);
 

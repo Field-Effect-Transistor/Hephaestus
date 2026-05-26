@@ -57,6 +57,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/Src/system/encoder.cpp
     App/Src/system/heater_channel.cpp
     App/Src/system/display_manager.cpp
+    App/Src/system/adc_ads1115.cpp
 
     ${U8G2_SOURCES}
     #App/Src/rotary_encoder.cpp
