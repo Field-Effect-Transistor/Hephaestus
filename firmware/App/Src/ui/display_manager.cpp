@@ -65,62 +65,38 @@ extern "C" {
 
 namespace Hephaestus {
 
-    void DisplayManager::init() {
-        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
-            &_u8g2, 
-            U8G2_R0, 
-            u8x8_byte_stm32_hw_i2c, 
-            u8x8_gpio_and_delay_stm32
-        );
+    void DisplayManager::init(IScreen* initialScreen, SystemContext* ctx) {
+        _currentScreen = initialScreen;
+        _context = ctx;
 
+        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+            &_u8g2, U8G2_R0, u8x8_byte_stm32_hw_i2c, u8x8_gpio_and_delay_stm32
+        );
         u8g2_InitDisplay(&_u8g2);
         u8g2_SetPowerSave(&_u8g2, 0);
     }
 
-    void DisplayManager::update(const HeaterChannel& iron, const HeaterChannel& air) {
+void DisplayManager::update() {
+        if (!_currentScreen || !_context) return;
+
         u8g2_ClearBuffer(&_u8g2);
-
-        char textBuffer[16]; 
-        uint8_t right_offset = 70;
-
-        u8g2_DrawVLine(&_u8g2, 64, 0, 64);
-        
-        // --- Air Channel ---
-        u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
-        u8g2_DrawStr(&_u8g2, 0, 10, "AIR SET:");
-        snprintf(textBuffer, sizeof(textBuffer), "%d", air.getTargetTemp());
-        u8g2_DrawStr(&_u8g2, 0, 22, textBuffer);
-
-        u8g2_SetFont(&_u8g2, u8g2_font_logisoso24_tn); 
-        snprintf(textBuffer, sizeof(textBuffer), "%d", air.getCurrentTemp());
-        u8g2_DrawStr(&_u8g2, 0, 52, textBuffer);
-
-        u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
-        const char* airState = (air.getState() == ChannelState::Active) ? "ACTIVE" : 
-                               (air.getState() == ChannelState::Sleep) ? "SLEEP" : "OFF";
-        u8g2_DrawStr(&_u8g2, 0, 64, airState);
-        
-        // --- Iron Channel ---
-        u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
-        u8g2_DrawStr(&_u8g2, right_offset, 10, "IRON SET:");
-        snprintf(textBuffer, sizeof(textBuffer), "%d", iron.getTargetTemp());
-        u8g2_DrawStr(&_u8g2, right_offset, 22, textBuffer);
-
-        u8g2_SetFont(&_u8g2, u8g2_font_logisoso24_tn);
-        snprintf(textBuffer, sizeof(textBuffer), "%d", iron.getCurrentTemp());
-        u8g2_DrawStr(&_u8g2, right_offset, 52, textBuffer);
-
-        u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
-        const char* ironState = (iron.getState() == ChannelState::Active) ? "ACTIVE" : 
-                                (iron.getState() == ChannelState::Sleep) ? "SLEEP" : "OFF";
-        u8g2_DrawStr(&_u8g2, right_offset, 64, ironState);
+        _currentScreen->draw(&_u8g2, *_context);
 
 #ifndef PC_SIMULATOR
-        // Відправляємо кадр на справжній дисплей по I2C
         u8g2_SendBuffer(&_u8g2);
 #else
-        // Передаємо кадр у SDL-адаптер для малювання на екрані ПК
         sdlContext.submitBuffer(u8g2_GetBufferPtr(&_u8g2));
 #endif
     }
+
+    void DisplayManager::dispatchEncoder(int16_t steps) {
+        if (_currentScreen && _context) _currentScreen->handleEncoder(steps, *_context);
+    }
+
+    void DisplayManager::dispatchButton(ButtonEvent event) {
+        if (!_currentScreen || !_context) return;
+        IScreen* next = _currentScreen->handleButton(event, *_context);
+        if (next) _currentScreen = next;
+    }
+
 } // namespace Hephaestus

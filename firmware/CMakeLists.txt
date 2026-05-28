@@ -43,6 +43,7 @@ if(BUILD_SIMULATOR)
         # UI & Logging
         App/Src/ui/display_manager.cpp
         App/Src/system/logger/logger.cpp
+        App/Src/ui/screens.cpp
         ${U8G2_SOURCES}
 
         # FreeRTOS Kernel & POSIX Port
@@ -104,6 +105,7 @@ else()
         # UI & Logging
         App/Src/ui/display_manager.cpp
         App/Src/system/logger/logger.cpp
+        App/Src/ui/screens.cpp
         ${U8G2_SOURCES}
     )
 

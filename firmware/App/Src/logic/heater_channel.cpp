@@ -85,7 +85,6 @@ namespace Hephaestus {
 
         int16_t activeTarget = (_state == ChannelState::Sleep) ? _sleepTemp : _targetTemp;
 
-        // Використовуємо ПІД замість релейного керування!
         _pwmDuty = _pid.compute((float)activeTarget, (float)_currentTemp, dt);
 
         _pwmDriver.setDutyCycle(_pwmDuty);

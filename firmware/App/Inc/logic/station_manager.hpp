@@ -9,6 +9,7 @@
 #include "logic/button.hpp"
 #include "logic/heater_channel.hpp"
 #include "ui/display_manager.hpp"
+#include "ui/screens.hpp"
 #include "system/system_config.hpp"
 #include "system/math_sensors.hpp"
 
@@ -17,6 +18,7 @@ namespace Hephaestus {
     class StationManager {
     private:
         SystemConfig   _sysConfig; 
+        SystemContext  _systemContext;
 
         IAdc&        _adc;
         IDigitalPin& _ironPin;
@@ -32,8 +34,8 @@ namespace Hephaestus {
         
         DisplayManager _display;
 
-        void handleButton(HeaterChannel& channel, ButtonEvent event);
-        void handleEncoder(HeaterChannel& channel, EncoderResult enc, bool isPressed);
+    void handleButton(HeaterChannel& channel, ButtonEvent event, bool isIron);
+    void handleEncoder(HeaterChannel& channel, EncoderResult enc, bool isPressed, bool isIron);
 
     public:
         StationManager(IAdc& adc, 
