@@ -1,4 +1,3 @@
-// App/Src/platform/stm32/app.cpp
 #include "app.hpp"
 #include "usart.h"
 #include "tim.h"
@@ -8,37 +7,34 @@
 #include "system/logger/uart_log_sink.hpp"
 #include "system/i2c_arbiter.hpp"
 
-// Наші апаратні адаптери
 #include "platform/stm32/adc_ads1115.hpp"
 #include "platform/stm32/pwm_driver_tim.hpp"
 #include "platform/stm32/gpio_pin.hpp"
-#include "platform/stm32/encoder_tim.hpp" // ЗМІНЕНО ТУТ!
+#include "platform/stm32/encoder_tim.hpp"
 
-// Головний мозок
 #include "logic/station_manager.hpp"
 
 SemaphoreHandle_t Hephaestus::i2c1Mutex = nullptr;
 
-// 1. Апаратні об'єкти (Реалізація інтерфейсів)
+// Hardware drivers instantiation
 static Hephaestus::UARTLogSink uartLogSink(&huart1);
 static Hephaestus::Ads1115     adc(&hi2c1);
 
 static Hephaestus::GpioPin ironPin(GPIOB, GPIO_PIN_12);
 static Hephaestus::GpioPin airPin(GPIOB, GPIO_PIN_13);
 
-// ЗМІНЕНО ТУТ (Encoder -> EncoderTim)
 static Hephaestus::EncoderTim ironEncoder(&htim2);
 static Hephaestus::EncoderTim airEncoder(&htim4);
 
 static Hephaestus::PwmDriverTim ironPwm(&htim1, TIM_CHANNEL_1);
 static Hephaestus::PwmDriverTim airPwm(&htim1, TIM_CHANNEL_4);
 
-// 2. Створення Мозку системи (Dependency Injection)
+// System controller instantiation
 static Hephaestus::StationManager station(
     adc, ironPin, airPin, ironEncoder, airEncoder, ironPwm, airPwm
 );
 
-// 3. Задачі FreeRTOS
+// RTOS Tasks
 void appLoopTask(void*) {
     for(;;) {
         station.tickInput(HAL_GetTick());
@@ -53,7 +49,7 @@ void displayTask(void*) {
     }
 }
 
-// 4. Ініціалізація
+// System initialization entry point
 extern "C" void app_setup() {
     Hephaestus::i2c1Mutex = xSemaphoreCreateMutex();
     
@@ -70,7 +66,7 @@ extern "C" void app_setup() {
     xTaskCreate(appLoopTask, "Input", 256, nullptr, tskIDLE_PRIORITY + 3, nullptr);
 }
 
-// Заглушка, оскільки виклик залишився у freertos.c
+// Main loop stub (controlled by RTOS scheduler)
 extern "C" void app_loop() {
     vTaskDelay(1000);
 }

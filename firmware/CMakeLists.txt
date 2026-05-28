@@ -1,94 +1,124 @@
 cmake_minimum_required(VERSION 3.22)
 
-#
-# This file is generated only once,
-# and is not re-generated if converter is called multiple times.
-#
-# User is free to modify the file as much as necessary
-#
-
-# Setup compiler settings
+# --- Standard C++ Configuration ---
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-
-# Define the build type
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-# Set the project name
 set(CMAKE_PROJECT_NAME Hephaestus)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE) # Enable clangd/IntelliSense support
 
-# Enable compile command to ease indexing with e.g. clangd
-set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+# ==============================================================================
+# BUILD CONFIGURATION
+# ==============================================================================
+option(BUILD_SIMULATOR "Build FreeRTOS PC Simulator instead of STM32 Firmware" OFF)
 
-# Core project settings
-project(${CMAKE_PROJECT_NAME})
-message("Build type: " ${CMAKE_BUILD_TYPE})
+# Shared 3rd-party libraries
+file(GLOB_RECURSE U8G2_SOURCES "${CMAKE_SOURCE_DIR}/Libs/u8g2/csrc/*.c")
 
-# Enable CMake support for ASM and C languages
-enable_language(C CXX ASM)
+if(BUILD_SIMULATOR)
+    # --------------------------------------------------------------------------
+    # TARGET: PC SIMULATOR (POSIX)
+    # --------------------------------------------------------------------------
+    project(${CMAKE_PROJECT_NAME} C CXX)
+    message(STATUS "Build type: ${CMAKE_BUILD_TYPE} (PC SIMULATOR)")
 
-# Create an executable object type
-add_executable(${CMAKE_PROJECT_NAME})
+    add_compile_definitions(PC_SIMULATOR) # Trigger #ifdefs in C++ code
 
-# Add STM32CubeMX generated sources
-add_subdirectory(cmake/stm32cubemx)
+    add_executable(${CMAKE_PROJECT_NAME}_Sim
+        # Platform Specifics (Mocks & PC Entry Point)
+        App/Src/platform/pc/main_pc.cpp
+        App/Src/platform/pc/hal_mock.cpp
+        
+        # Core Business Logic
+        App/Src/logic/station_manager.cpp
+        App/Src/logic/button.cpp
+        App/Src/logic/heater_channel.cpp
+        
+        # UI & Logging
+        App/Src/ui/display_manager.cpp
+        App/Src/system/logger/logger.cpp
+        ${U8G2_SOURCES}
 
-# Link directories setup
-target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined library search paths
-)
+        # FreeRTOS Kernel & POSIX Port
+        Middlewares/Third_Party/FreeRTOS/Source/list.c
+        Middlewares/Third_Party/FreeRTOS/Source/queue.c
+        Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+        Middlewares/Third_Party/FreeRTOS/Source/timers.c
+        Libs/FreeRTOS_POSIX/heap_3.c
+        Libs/FreeRTOS_POSIX/port.c
+        Libs/FreeRTOS_POSIX/utils/wait_for_event.c
+    )
 
-file(GLOB_RECURSE U8G2_SOURCES
-    "${CMAKE_SOURCE_DIR}/Libs/u8g2/csrc/*.c"
-)
+    target_include_directories(${CMAKE_PROJECT_NAME}_Sim PRIVATE
+        App/Inc/
+        App/Src/platform/pc
+        Middlewares/Third_Party/FreeRTOS/Source/include
+        Libs/FreeRTOS_POSIX
+        Libs/FreeRTOS_POSIX/utils
+        ${CMAKE_SOURCE_DIR}/Libs/u8g2/csrc
+    )
 
-# Add sources to executable
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    App/Src/app.cpp
-    App/Src/platform/stm32/exti_registry.cpp
-    App/Src/system/logger/logger.cpp
-    App/Src/system/logger/uart_log_sink.cpp
-    App/Src/logic/button.cpp
-    App/Src/system/encoder.cpp
-    App/Src/logic/heater_channel.cpp
-    App/Src/ui/display_manager.cpp
-    App/Src/platform/stm32/adc_ads1115.cpp
-    ${U8G2_SOURCES}
-)
+    # Link OS-level threads for FreeRTOS simulation
+    find_package(Threads REQUIRED)
+    target_link_libraries(${CMAKE_PROJECT_NAME}_Sim Threads::Threads rt)
 
-# Add include paths
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined include paths
-    App/Inc/
-    Core/Inc/
+else()
+    # --------------------------------------------------------------------------
+    # TARGET: STM32 FIRMWARE
+    # --------------------------------------------------------------------------
+    project(${CMAKE_PROJECT_NAME} C CXX ASM)
+    message(STATUS "Build type: ${CMAKE_BUILD_TYPE} (STM32 FIRMWARE)")
 
-    Drivers/STM32F1xx_HAL_Driver/Inc
-    Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
-    Drivers/CMSIS/Device/ST/STM32F1xx/Include
-    Drivers/CMSIS/Include
+    add_executable(${CMAKE_PROJECT_NAME})
+    
+    # Include CubeMX generated CMake target
+    add_subdirectory(cmake/stm32cubemx)
 
-    Middlewares/Third_Party/FreeRTOS/Source/include
-    Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
-    Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+        # Platform Specifics (STM32 Hardware Adapters)
+        App/Src/platform/stm32/app.cpp
+        App/Src/platform/stm32/exti_registry.cpp
+        App/Src/platform/stm32/adc_ads1115.cpp
+        App/Src/platform/stm32/encoder_tim.cpp
+        App/Src/system/logger/uart_log_sink.cpp
+        
+        # Core Business Logic
+        App/Src/logic/station_manager.cpp
+        App/Src/logic/button.cpp
+        App/Src/logic/heater_channel.cpp
+        
+        # UI & Logging
+        App/Src/ui/display_manager.cpp
+        App/Src/system/logger/logger.cpp
+        ${U8G2_SOURCES}
+    )
 
-    ${CMAKE_SOURCE_DIR}/Libs/u8g2/csrc
-)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+        App/Inc/
+        Core/Inc/
+        
+        # STM32 HAL & CMSIS
+        Drivers/STM32F1xx_HAL_Driver/Inc
+        Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
+        Drivers/CMSIS/Device/ST/STM32F1xx/Include
+        Drivers/CMSIS/Include
 
-# Add project symbols (macros)
-target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined symbols
-)
+        # FreeRTOS ARM Port
+        Middlewares/Third_Party/FreeRTOS/Source/include
+        Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
+        Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
 
-# Remove wrong libob.a library dependency when using cpp files
-list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
+        ${CMAKE_SOURCE_DIR}/Libs/u8g2/csrc
+    )
 
-# Add linked libraries
-target_link_libraries(${CMAKE_PROJECT_NAME}
-    stm32cubemx
+    # Fix for CubeMX generated CMake (removes unnecessary libob.a dependency)
+    list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
+    
+    target_link_libraries(${CMAKE_PROJECT_NAME} stm32cubemx)
 
-    # Add user defined libraries
-)
+endif()

@@ -1,9 +1,15 @@
-//  App/Inc/system/logger/logger.hpp
 #pragma once
 
-#include "main.h"
+#ifndef PC_SIMULATOR
+    #include "main.h"
+#else
+    #include <cstdint>
+    extern "C" uint32_t HAL_GetTick();
+#endif
+
 #include "FreeRTOS.h"
 #include "queue.h"
+
 #include "interfaces/ILogSink.hpp"
 #include <cstdio>
 #include <vector>
@@ -30,7 +36,7 @@ namespace Hephaestus {
             if constexpr (L >= BUILD_LOG_LEVEL) {
                 if (L >= runtimeLogLevel && logQueue != nullptr) {
                     LogMessage msg;
-                    uint32_t timeMs = HAL_GetTick();
+                    uint32_t timeMs = HAL_GetTick(); 
                     
                     const char* levelStr = getLevelString(L);
 
