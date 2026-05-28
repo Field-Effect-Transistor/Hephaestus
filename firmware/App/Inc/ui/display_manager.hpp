@@ -1,7 +1,7 @@
 #pragma once
 
 #include "u8g2.h"
-#include "system/heater_channel.hpp"
+#include "logic/heater_channel.hpp"
 
 namespace Hephaestus {
 

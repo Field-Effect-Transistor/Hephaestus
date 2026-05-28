@@ -1,7 +1,8 @@
-// App/Inc/system/heater_channel.hpp
+// App/Inc/logic/heater_channel.hpp
 #pragma once
 
 #include <cstdint>
+#include "interfaces/IPwm.hpp"
 
 namespace Hephaestus {
 
@@ -15,18 +16,20 @@ namespace Hephaestus {
 
     class HeaterChannel {
     private:
-        const char*  _name;       // Назва для логування ("IRON" або "AIR")
-        int16_t      _targetTemp; // Задана температура
-        int16_t      _currentTemp;// Поточна (реальна) температура
-        uint8_t      _pwmDuty;    // Відсоток потужності ШІМ (0-100)
-        ChannelState _state;      // Поточний стан
+        const char*     _name;       // Назва для логування ("IRON" або "AIR")
+        IPwm&           _pwmDriver;
 
-        const int16_t _minTemp;   // Мінімальний ліміт температури
-        const int16_t _maxTemp;   // Максимальний ліміт температури
-        const int16_t _sleepTemp; // Температура для режиму сну
+        int16_t         _targetTemp; // Задана температура
+        int16_t         _currentTemp;// Поточна (реальна) температура
+        float           _pwmDuty;    // Відсоток потужності ШІМ (0-100)
+        ChannelState    _state;      // Поточний стан
+
+        const int16_t   _minTemp;   // Мінімальний ліміт температури
+        const int16_t   _maxTemp;   // Максимальний ліміт температури
+        const int16_t   _sleepTemp; // Температура для режиму сну
 
     public:
-        HeaterChannel(const char* name, int16_t defaultTemp, int16_t minTemp, int16_t maxTemp, int16_t sleepTemp);
+        HeaterChannel(const char* name, IPwm& pwmDriver, int16_t defaultTemp, int16_t minTemp, int16_t maxTemp, int16_t sleepTemp);
 
         // Керування станом
         void toggleState();
@@ -37,8 +40,9 @@ namespace Hephaestus {
         void changeTargetTemp(int16_t delta);
         void setTargetTemp(int16_t newTemp);
         
-        // Оновлення поточної температури (буде викликатись з АЦП задачі)
         void setCurrentTemp(int16_t temp) { _currentTemp = temp; }
+
+    void updateControlLoop();
 
         // Геттери
         int16_t getTargetTemp() const { return _targetTemp; }

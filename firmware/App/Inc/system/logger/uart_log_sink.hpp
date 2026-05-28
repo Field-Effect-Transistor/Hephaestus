@@ -1,7 +1,7 @@
 // App/Inc/system/logger/uart_log_sink.hpp
 #pragma once
 
-#include "system/logger/ILogSink.hpp"
+#include "interfaces/ILogSink.hpp"
 
 struct __UART_HandleTypeDef;
 typedef __UART_HandleTypeDef UART_HandleTypeDef;

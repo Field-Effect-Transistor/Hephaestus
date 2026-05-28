@@ -48,19 +48,16 @@ file(GLOB_RECURSE U8G2_SOURCES
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user sources here
     App/Src/app.cpp
-    App/Src/system/exti_registry.cpp
+    App/Src/platform/stm32/exti_registry.cpp
     App/Src/system/logger/logger.cpp
     App/Src/system/logger/uart_log_sink.cpp
-    App/Src/system/button.cpp
+    App/Src/logic/button.cpp
     App/Src/system/encoder.cpp
-    App/Src/system/heater_channel.cpp
-    App/Src/system/display_manager.cpp
-    App/Src/system/adc_ads1115.cpp
-
+    App/Src/logic/heater_channel.cpp
+    App/Src/ui/display_manager.cpp
+    App/Src/platform/stm32/adc_ads1115.cpp
     ${U8G2_SOURCES}
-    #App/Src/rotary_encoder.cpp
 )
 
 # Add include paths

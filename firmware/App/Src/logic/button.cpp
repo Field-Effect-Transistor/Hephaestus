@@ -1,4 +1,4 @@
-#include "system/button.hpp"
+#include "logic/button.hpp"
 
 namespace Hephaestus {
 

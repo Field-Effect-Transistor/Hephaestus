@@ -4,7 +4,7 @@
 #include "main.h"
 #include "FreeRTOS.h"
 #include "queue.h"
-#include "ILogSink.hpp"
+#include "interfaces/ILogSink.hpp"
 #include <cstdio>
 #include <vector>
 

@@ -1,5 +1,5 @@
 // App/Src/system/adc_ads1115.cpp
-#include "system/adc_ads1115.hpp"
+#include "platform/stm32/adc_ads1115.hpp"
 #include "system/i2c_arbiter.hpp"
 #include "system/logger/logger.hpp"
 #include "FreeRTOS.h"

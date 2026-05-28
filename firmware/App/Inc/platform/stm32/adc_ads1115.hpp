@@ -1,7 +1,7 @@
 // App/Inc/system/adc_ads1115.hpp
 #pragma once
 
-#include "system/IAdc.hpp"
+#include "interfaces/IAdc.hpp"
 #include "i2c.h" // Для I2C_HandleTypeDef
 
 namespace Hephaestus {

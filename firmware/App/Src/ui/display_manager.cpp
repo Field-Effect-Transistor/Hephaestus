@@ -1,5 +1,5 @@
 // App/Src/system/display_manager.cpp
-#include "system/display_manager.hpp"
+#include "ui/display_manager.hpp"
 #include "system/logger/logger.hpp" // ДОДАНО ДЛЯ ЛОГІВ
 #include "i2c.h"
 #include "FreeRTOS.h"
