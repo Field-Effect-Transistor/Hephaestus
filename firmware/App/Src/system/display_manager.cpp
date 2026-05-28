@@ -1,13 +1,12 @@
 // App/Src/system/display_manager.cpp
 #include "system/display_manager.hpp"
-#include "system/i2c_arbiter.hpp"
-
+#include "system/logger/logger.hpp" // ДОДАНО ДЛЯ ЛОГІВ
 #include "i2c.h"
 #include "FreeRTOS.h"
 #include "task.h"
-
 #include <cstdio>
 
+// Спробуй 0x78. Якщо будуть помилки в логах, зміни на 0x7A
 #define OLED_I2C_ADDRESS 0x78 
 
 extern "C" {
@@ -40,14 +39,16 @@ extern "C" {
                 buf_idx = 0;
                 break;
             case U8X8_MSG_BYTE_END_TRANSFER:
-                if (Hephaestus::i2c1Mutex != nullptr) {
-                    xSemaphoreTake(Hephaestus::i2c1Mutex, portMAX_DELAY);
-                    HAL_I2C_Master_Transmit(&hi2c1, OLED_I2C_ADDRESS, buffer, buf_idx, HAL_MAX_DELAY);
-                    xSemaphoreGive(Hephaestus::i2c1Mutex);
-                } else {
-                    HAL_I2C_Master_Transmit(&hi2c1, OLED_I2C_ADDRESS, buffer, buf_idx, HAL_MAX_DELAY);
+            {
+                // Відправка з таймаутом 10 мс
+                HAL_StatusTypeDef status = HAL_I2C_Master_Transmit(&hi2c1, OLED_I2C_ADDRESS, buffer, buf_idx, 10);
+                
+                // Якщо екран не відповів (NACK) - пишемо помилку в логер!
+                if (status != HAL_OK) {
+                    Hephaestus::Logger::error("I2C", "OLED TX Fail! Addr: 0x%02X, Err: %d", OLED_I2C_ADDRESS, status);
                 }
                 break;
+            }
             default:
                 return 0;
         }
@@ -58,7 +59,8 @@ extern "C" {
 namespace Hephaestus {
 
     void DisplayManager::init() {
-        u8g2_Setup_sh1106_i2c_128x64_noname_f(
+        // ЗМІНЕНО НА ssd1306 ДЛЯ ДИСПЛЕЯ 0.96"
+        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
             &_u8g2, 
             U8G2_R0, 
             u8x8_byte_stm32_hw_i2c, 
@@ -78,46 +80,35 @@ namespace Hephaestus {
         u8g2_DrawVLine(&_u8g2, 64, 0, 64);
         
         // --- МАЛЮЄМО ФЕН (AIR) - ЗЛІВА ---
-        
-        // Задана температура
         u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
         u8g2_DrawStr(&_u8g2, 0, 10, "AIR SET:");
-        
         snprintf(textBuffer, sizeof(textBuffer), "%d", air.getTargetTemp());
         u8g2_DrawStr(&_u8g2, 0, 22, textBuffer);
 
-        // Поточна температура
         u8g2_SetFont(&_u8g2, u8g2_font_logisoso24_tn); 
         snprintf(textBuffer, sizeof(textBuffer), "%d", air.getCurrentTemp());
         u8g2_DrawStr(&_u8g2, 0, 52, textBuffer);
 
-        // Статус
         u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
         const char* airState = (air.getState() == ChannelState::Active) ? "ACTIVE" : 
                                (air.getState() == ChannelState::Sleep) ? "SLEEP" : "OFF";
         u8g2_DrawStr(&_u8g2, 0, 64, airState);
         
         // --- МАЛЮЄМО ПАЯЛЬНИК (IRON) - СПРАВА ---
-        
-        // Задана температура
         u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
         u8g2_DrawStr(&_u8g2, right_offset, 10, "IRON SET:");
-
         snprintf(textBuffer, sizeof(textBuffer), "%d", iron.getTargetTemp());
         u8g2_DrawStr(&_u8g2, right_offset, 22, textBuffer);
 
-        // Поточна температура
         u8g2_SetFont(&_u8g2, u8g2_font_logisoso24_tn);
         snprintf(textBuffer, sizeof(textBuffer), "%d", iron.getCurrentTemp());
         u8g2_DrawStr(&_u8g2, right_offset, 52, textBuffer);
 
-        // Статус
         u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
         const char* ironState = (iron.getState() == ChannelState::Active) ? "ACTIVE" : 
                                 (iron.getState() == ChannelState::Sleep) ? "SLEEP" : "OFF";
         u8g2_DrawStr(&_u8g2, right_offset, 64, ironState);
 
-        // Відправляємо кадр на екран по I2C
         u8g2_SendBuffer(&_u8g2);
     }
 } // namespace Hephaestus
