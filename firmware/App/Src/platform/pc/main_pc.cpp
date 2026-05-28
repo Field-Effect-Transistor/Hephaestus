@@ -1,10 +1,12 @@
-// App/Src/platform/pc/main_pc.cpp
 #include <iostream>
 #include <cstdio>
+#include <SDL2/SDL.h>
+#include <pthread.h> // Для pthread_create
 
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "platform/pc/sdl_context.hpp"
 #include "interfaces/IAdc.hpp"
 #include "interfaces/IPwm.hpp"
 #include "interfaces/IDigitalPin.hpp"
@@ -16,66 +18,59 @@
 
 extern "C" uint32_t HAL_GetTick(); 
 
+// Єдиний глобальний контекст симулятора
+Hephaestus::SdlContext sdlContext;
+
 namespace Hephaestus {
 
-    // =========================================================================
-    // HARDWARE MOCKS FOR PC SIMULATION
-    // =========================================================================
-    
-    class MockAdc : public IAdc {
-        float readVoltage(uint8_t channel) override {
-            switch (channel) {
-                case 0: return 2.18f; // PSU (~24V)
-                case 1: return 1.65f; // NTC (~25C)
-                case 2: return 0.05f; // Iron TC
-                case 3: return 0.05f; // Air TC
-                default: return 0.0f;
-            }
+    // --- Mocks ---
+    class SdlPinIron : public IDigitalPin {
+        bool isActive() override { return sdlContext.isIronPressed(); } 
+    };
+    class SdlPinAir : public IDigitalPin {
+        bool isActive() override { return sdlContext.isAirPressed(); } 
+    };
+    class SdlEncoderIron : public IEncoder {
+        void init() override {}
+        EncoderResult getSteps() override { 
+            int16_t diff = sdlContext.getIronEncDiff();
+            return {diff, diff}; 
         }
     };
-
-    class MockPwm : public IPwm {
-        void setDutyCycle(float percent) override {} 
-        void enable(bool state) override {}
-    };
-
-    class MockPin : public IDigitalPin {
-        bool isActive() override { return false; } 
-    };
-
-    class MockEncoder : public IEncoder {
+    class SdlEncoderAir : public IEncoder {
         void init() override {}
-        EncoderResult getSteps() override { return {0, 0}; }
+        EncoderResult getSteps() override { 
+            int16_t diff = sdlContext.getAirEncDiff();
+            return {diff, diff}; 
+        }
     };
-
+    class MockAdc : public IAdc {
+        float readVoltage(uint8_t ch) override { return (ch == 0) ? 24.0f : 0.05f; }
+    };
+    class MockPwm : public IPwm {
+        void setDutyCycle(float p) override {} 
+        void enable(bool s) override {}
+    };
     class ConsoleLogSink : public ILogSink {
         bool isReady() const override { return true; }
-        void write(const uint8_t* data, size_t length) override {
-            fwrite(data, 1, length, stdout);
-            fflush(stdout); 
-        }
+        void write(const uint8_t* d, size_t l) override { fwrite(d, 1, l, stdout); fflush(stdout); }
     };
+}
 
-} // namespace Hephaestus
-
-// =========================================================================
-// SYSTEM INSTANTIATION
-// =========================================================================
-
-static Hephaestus::MockAdc     mockAdc;
-static Hephaestus::MockPin     mockPin;
-static Hephaestus::MockEncoder mockEnc;
-static Hephaestus::MockPwm     mockPwm;
+// --- ІНСТАНЦІЮВАННЯ СИСТЕМИ ---
+static Hephaestus::MockAdc        mockAdc;
+static Hephaestus::SdlPinIron     pinIron;
+static Hephaestus::SdlPinAir      pinAir;
+static Hephaestus::SdlEncoderIron encIron;
+static Hephaestus::SdlEncoderAir  encAir;
+static Hephaestus::MockPwm        mockPwm;
 static Hephaestus::ConsoleLogSink consoleSink;
 
 static Hephaestus::StationManager station(
-    mockAdc, mockPin, mockPin, mockEnc, mockEnc, mockPwm, mockPwm
+    mockAdc, pinIron, pinAir, encIron, encAir, mockPwm, mockPwm
 );
 
-// =========================================================================
-// FREERTOS TASKS (SIMULATED VIA PTHREADS)
-// =========================================================================
-
+// --- ЗАДАЧІ FREERTOS ---
 void appLoopTask(void*) {
     for(;;) {
         station.tickInput(HAL_GetTick());
@@ -85,33 +80,41 @@ void appLoopTask(void*) {
 
 void displayTask(void*) {
     station.initDisplay();
-
     for(;;) {
         station.tickDisplay();
         vTaskDelay(pdMS_TO_TICKS(80)); 
     }
 }
 
-// =========================================================================
-// ENTRY POINT
-// =========================================================================
+// Функція для запуску FreeRTOS у фоні
+void* rtosThreadRunner(void* arg) {
+    std::cout << "Starting FreeRTOS Scheduler in Background Thread...\n";
+    vTaskStartScheduler();
+    return nullptr;
+}
 
+// --- ENTRY POINT ---
 int main() {
-    std::cout << "Starting Hephaestus FreeRTOS Simulator on Linux...\n";
+    std::cout << "Starting Hephaestus FreeRTOS Simulator...\n";
+    std::cout << "[UP/DOWN, ENTER] - Iron | [W/S, SPACE] - Air\n\n";
 
     Hephaestus::Logger::init();
     Hephaestus::Logger::addSink(&consoleSink);
 
+    // SDL ініціалізується ДО старту RTOS-потоку
+    sdlContext.init();
+
     station.init();
 
-    // Stack size is specified in bytes for the POSIX port (16KB per task)
     xTaskCreate(Hephaestus::Logger::taskLoop, "Logger",  16384, nullptr, 1, nullptr);
     xTaskCreate(displayTask,                  "Display", 16384, nullptr, 2, nullptr);
     xTaskCreate(appLoopTask,                  "Input",   16384, nullptr, 3, nullptr);
 
-    Hephaestus::Logger::info("SYS", "Simulator RTOS Scheduler Starting...");
+    pthread_t rtosThread;
+    pthread_create(&rtosThread, nullptr, rtosThreadRunner, nullptr);
 
-    vTaskStartScheduler();
+    // Main thread повністю під SDL — poll events + render
+    sdlContext.runLoop(); // блокує назавжди
 
     return 0;
 }

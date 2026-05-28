@@ -1,27 +1,35 @@
 #include "ui/display_manager.hpp"
 #include "system/logger/logger.hpp"
-#include "FreeRTOS.h"
-#include "task.h"
 #include <cstdio>
 
+// Підключаємо платформо-залежні речі
 #ifndef PC_SIMULATOR
     #include "i2c.h"
     #include "system/i2c_arbiter.hpp"
+    #include "FreeRTOS.h"
+    #include "task.h"
     #define OLED_I2C_ADDRESS 0x78 
+#else
+    #include "platform/pc/sdl_context.hpp"
+    // Отримуємо доступ до глобального контексту вікна з main_pc.cpp
+    extern Hephaestus::SdlContext sdlContext; 
 #endif
 
 extern "C" {
+    // Коллбек затримок для u8g2
     uint8_t u8x8_gpio_and_delay_stm32(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
+#ifndef PC_SIMULATOR
         switch (msg) {
             case U8X8_MSG_DELAY_MILLI:
                 vTaskDelay(pdMS_TO_TICKS(arg_int));
                 break;
-            default:
-                return 0;
+            default: return 0;
         }
+#endif
         return 1;
     }
 
+    // Коллбек I2C шини для u8g2
     uint8_t u8x8_byte_stm32_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
 #ifndef PC_SIMULATOR
         static uint8_t buffer[32];
@@ -48,13 +56,10 @@ extern "C" {
                 }
                 break;
             }
-            default:
-                return 0;
+            default: return 0;
         }
-        return 1;
-#else
-        return 1;
 #endif
+        return 1; // У симуляторі I2C "завжди працює"
     }
 }
 
@@ -80,7 +85,7 @@ namespace Hephaestus {
 
         u8g2_DrawVLine(&_u8g2, 64, 0, 64);
         
-        // Air Channel Display
+        // --- Air Channel ---
         u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
         u8g2_DrawStr(&_u8g2, 0, 10, "AIR SET:");
         snprintf(textBuffer, sizeof(textBuffer), "%d", air.getTargetTemp());
@@ -95,7 +100,7 @@ namespace Hephaestus {
                                (air.getState() == ChannelState::Sleep) ? "SLEEP" : "OFF";
         u8g2_DrawStr(&_u8g2, 0, 64, airState);
         
-        // Iron Channel Display
+        // --- Iron Channel ---
         u8g2_SetFont(&_u8g2, u8g2_font_helvB08_tf);
         u8g2_DrawStr(&_u8g2, right_offset, 10, "IRON SET:");
         snprintf(textBuffer, sizeof(textBuffer), "%d", iron.getTargetTemp());
@@ -110,6 +115,12 @@ namespace Hephaestus {
                                 (iron.getState() == ChannelState::Sleep) ? "SLEEP" : "OFF";
         u8g2_DrawStr(&_u8g2, right_offset, 64, ironState);
 
+#ifndef PC_SIMULATOR
+        // Відправляємо кадр на справжній дисплей по I2C
         u8g2_SendBuffer(&_u8g2);
+#else
+        // Передаємо кадр у SDL-адаптер для малювання на екрані ПК
+        sdlContext.submitBuffer(u8g2_GetBufferPtr(&_u8g2));
+#endif
     }
 } // namespace Hephaestus

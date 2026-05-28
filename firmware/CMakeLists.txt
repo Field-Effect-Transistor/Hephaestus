@@ -33,6 +33,7 @@ if(BUILD_SIMULATOR)
         # Platform Specifics (Mocks & PC Entry Point)
         App/Src/platform/pc/main_pc.cpp
         App/Src/platform/pc/hal_mock.cpp
+        App/Src/platform/pc/sdl_context.cpp  # <--- ДОДАНО ОСЬ ТУТ
         
         # Core Business Logic
         App/Src/logic/station_manager.cpp
@@ -65,7 +66,15 @@ if(BUILD_SIMULATOR)
 
     # Link OS-level threads for FreeRTOS simulation
     find_package(Threads REQUIRED)
-    target_link_libraries(${CMAKE_PROJECT_NAME}_Sim Threads::Threads rt)
+    find_package(SDL2 REQUIRED)
+    target_include_directories(${CMAKE_PROJECT_NAME}_Sim PRIVATE ${SDL2_INCLUDE_DIRS})
+    # -----------------------
+
+    target_link_libraries(${CMAKE_PROJECT_NAME}_Sim 
+        Threads::Threads 
+        rt 
+        ${SDL2_LIBRARIES}
+    )
 
 else()
     # --------------------------------------------------------------------------
