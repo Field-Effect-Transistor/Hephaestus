@@ -1,7 +1,8 @@
+// App/Src/platform/pc/main_pc.cpp
 #include <iostream>
 #include <cstdio>
 #include <SDL2/SDL.h>
-#include <pthread.h> // Для pthread_create
+#include <pthread.h> 
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -18,12 +19,10 @@
 
 extern "C" uint32_t HAL_GetTick(); 
 
-// Єдиний глобальний контекст симулятора
 Hephaestus::SdlContext sdlContext;
 
 namespace Hephaestus {
 
-    // --- Mocks ---
     class SdlPinIron : public IDigitalPin {
         bool isActive() override { return sdlContext.isIronPressed(); } 
     };
@@ -44,13 +43,42 @@ namespace Hephaestus {
             return {diff, diff}; 
         }
     };
+
     class MockAdc : public IAdc {
-        float readVoltage(uint8_t ch) override { return (ch == 0) ? 24.0f : 0.05f; }
+    public:
+        float simulatedTempIron = 25.0f;
+        float simulatedTempAir  = 25.0f;
+
+        float readVoltage(uint8_t channel) override {
+            if (channel == 2) { // IRON TC (Gain 201)
+                return (simulatedTempIron - 25.0f) * 0.041f * 201.0f / 1000.0f;
+            }
+            if (channel == 3) { // AIR TC (Gain 101)
+                return (simulatedTempAir - 25.0f) * 0.041f * 101.0f / 1000.0f;
+            }
+            if (channel == 0) return 2.18f; // PSU
+            if (channel == 1) return 1.65f; // NTC (25C)
+            
+            return 0.0f;
+        }
+
+        void applyHeat(float ironDuty, float airDuty, float dt) {
+            simulatedTempIron += (ironDuty * 1.5f * dt) - ((simulatedTempIron - 25.0f) * 0.1f * dt);
+            if (simulatedTempIron < 25.0f) simulatedTempIron = 25.0f;
+
+            simulatedTempAir += (airDuty * 2.5f * dt) - ((simulatedTempAir - 25.0f) * 0.15f * dt);
+            if (simulatedTempAir < 25.0f) simulatedTempAir = 25.0f;
+        }
     };
+
     class MockPwm : public IPwm {
-        void setDutyCycle(float p) override {} 
-        void enable(bool s) override {}
+    public:
+        float currentDuty = 0.0f;
+        void setDutyCycle(float p) override { currentDuty = p; } 
+        void enable(bool s) override { if(!s) currentDuty = 0.0f; }
+        float getDutyCycle() const { return currentDuty; }
     };
+
     class ConsoleLogSink : public ILogSink {
         bool isReady() const override { return true; }
         void write(const uint8_t* d, size_t l) override { fwrite(d, 1, l, stdout); fflush(stdout); }
@@ -63,17 +91,22 @@ static Hephaestus::SdlPinIron     pinIron;
 static Hephaestus::SdlPinAir      pinAir;
 static Hephaestus::SdlEncoderIron encIron;
 static Hephaestus::SdlEncoderAir  encAir;
-static Hephaestus::MockPwm        mockPwm;
+static Hephaestus::MockPwm        ironPwm; // Окремо для паяльника
+static Hephaestus::MockPwm        airPwm;  // Окремо для фена
 static Hephaestus::ConsoleLogSink consoleSink;
 
 static Hephaestus::StationManager station(
-    mockAdc, pinIron, pinAir, encIron, encAir, mockPwm, mockPwm
+    mockAdc, pinIron, pinAir, encIron, encAir, ironPwm, airPwm
 );
 
 // --- ЗАДАЧІ FREERTOS ---
 void appLoopTask(void*) {
     for(;;) {
         station.tickInput(HAL_GetTick());
+        
+        // Гріємо віртуальні паяльник і фен!
+        mockAdc.applyHeat(ironPwm.getDutyCycle(), airPwm.getDutyCycle(), 0.015f);
+        
         vTaskDelay(pdMS_TO_TICKS(15));
     }
 }
@@ -86,14 +119,12 @@ void displayTask(void*) {
     }
 }
 
-// Функція для запуску FreeRTOS у фоні
 void* rtosThreadRunner(void* arg) {
     std::cout << "Starting FreeRTOS Scheduler in Background Thread...\n";
     vTaskStartScheduler();
     return nullptr;
 }
 
-// --- ENTRY POINT ---
 int main() {
     std::cout << "Starting Hephaestus FreeRTOS Simulator...\n";
     std::cout << "[UP/DOWN, ENTER] - Iron | [W/S, SPACE] - Air\n\n";
@@ -101,9 +132,7 @@ int main() {
     Hephaestus::Logger::init();
     Hephaestus::Logger::addSink(&consoleSink);
 
-    // SDL ініціалізується ДО старту RTOS-потоку
     sdlContext.init();
-
     station.init();
 
     xTaskCreate(Hephaestus::Logger::taskLoop, "Logger",  16384, nullptr, 1, nullptr);
@@ -113,8 +142,7 @@ int main() {
     pthread_t rtosThread;
     pthread_create(&rtosThread, nullptr, rtosThreadRunner, nullptr);
 
-    // Main thread повністю під SDL — poll events + render
-    sdlContext.runLoop(); // блокує назавжди
+    sdlContext.runLoop(); 
 
     return 0;
 }

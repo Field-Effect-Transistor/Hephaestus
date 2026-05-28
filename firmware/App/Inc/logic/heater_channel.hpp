@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include "interfaces/IPwm.hpp"
+#include "logic/pid_controller.hpp"
 
 namespace Hephaestus {
 
@@ -23,13 +24,24 @@ namespace Hephaestus {
         int16_t         _currentTemp;// Поточна (реальна) температура
         float           _pwmDuty;    // Відсоток потужності ШІМ (0-100)
         ChannelState    _state;      // Поточний стан
+        PidController   _pid;
 
         const int16_t   _minTemp;   // Мінімальний ліміт температури
         const int16_t   _maxTemp;   // Максимальний ліміт температури
         const int16_t   _sleepTemp; // Температура для режиму сну
 
     public:
-        HeaterChannel(const char* name, IPwm& pwmDriver, int16_t defaultTemp, int16_t minTemp, int16_t maxTemp, int16_t sleepTemp);
+        HeaterChannel(
+            const char* name,
+            IPwm& pwmDriver, 
+            int16_t defaultTemp,
+            int16_t minTemp,
+            int16_t maxTemp,
+            int16_t sleepTemp,
+            float kp,
+            float ki, 
+            float kd
+        );
 
         // Керування станом
         void toggleState();
@@ -41,8 +53,7 @@ namespace Hephaestus {
         void setTargetTemp(int16_t newTemp);
         
         void setCurrentTemp(int16_t temp) { _currentTemp = temp; }
-
-    void updateControlLoop();
+        void updateControlLoop(float dt);
 
         // Геттери
         int16_t getTargetTemp() const { return _targetTemp; }

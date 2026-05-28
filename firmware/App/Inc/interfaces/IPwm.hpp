@@ -5,7 +5,8 @@ namespace Hephaestus {
     class IPwm {
     public:
         virtual ~IPwm() = default;
-        virtual void setDutyCycle(float percent) = 0; // 0.0 до 100.0
+        virtual void setDutyCycle(float percent) = 0; 
         virtual void enable(bool state) = 0;
+        virtual float getDutyCycle() const = 0;
     };
 }

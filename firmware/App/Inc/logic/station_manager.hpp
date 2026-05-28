@@ -16,6 +16,8 @@ namespace Hephaestus {
 
     class StationManager {
     private:
+        SystemConfig   _sysConfig; 
+
         IAdc&        _adc;
         IDigitalPin& _ironPin;
         IDigitalPin& _airPin;
@@ -24,11 +26,11 @@ namespace Hephaestus {
 
         Button        _ironBtn;
         Button        _airBtn;
+        
         HeaterChannel _ironChannel;
         HeaterChannel _airChannel;
         
         DisplayManager _display;
-        SystemConfig   _sysConfig;
 
         void handleButton(HeaterChannel& channel, ButtonEvent event);
         void handleEncoder(HeaterChannel& channel, EncoderResult enc, bool isPressed);
@@ -42,8 +44,8 @@ namespace Hephaestus {
         void init();
         void initDisplay();
         
-        void tickInput(uint32_t currentTickMs); // Викликати кожні 15 мс
-        void tickDisplay();                     // Викликати кожні 80 мс
+        void tickInput(uint32_t currentTickMs); 
+        void tickDisplay();                     
     };
 
 } // namespace Hephaestus

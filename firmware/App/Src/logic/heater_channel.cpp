@@ -4,8 +4,17 @@
 
 namespace Hephaestus {
 
-    HeaterChannel::HeaterChannel(const char* name, IPwm& pwmDriver, int16_t defaultTemp, int16_t minTemp, int16_t maxTemp, int16_t sleepTemp)
-        : _name(name), 
+    HeaterChannel::HeaterChannel(
+        const char* name,
+        IPwm& pwmDriver,
+        int16_t defaultTemp,
+        int16_t minTemp,
+        int16_t maxTemp,
+        int16_t sleepTemp,
+        float kp,
+        float ki,
+        float kd
+    ) : _name(name), 
           _pwmDriver(pwmDriver), 
           _targetTemp(defaultTemp), 
           _currentTemp(0), 
@@ -13,11 +22,11 @@ namespace Hephaestus {
           _state(ChannelState::Off),
           _minTemp(minTemp), 
           _maxTemp(maxTemp), 
-          _sleepTemp(sleepTemp) 
+          _sleepTemp(sleepTemp),
+          _pid(kp, ki, kd, 0.0f, 100.0f)
     {
         if (_targetTemp < _minTemp) _targetTemp = _minTemp;
         if (_targetTemp > _maxTemp) _targetTemp = _maxTemp;
-        
         _pwmDriver.setDutyCycle(0.0f);
     }
 
@@ -36,7 +45,8 @@ namespace Hephaestus {
 
     void HeaterChannel::setState(ChannelState newState) {
         if (_state == newState) return;
-
+        if (newState == ChannelState::Active) _pid.reset(); 
+        
         _state = newState;
 
         const char* stateStr = "UNKNOWN";
@@ -66,7 +76,7 @@ namespace Hephaestus {
         }
     }
 
-    void HeaterChannel::updateControlLoop() {
+    void HeaterChannel::updateControlLoop(float dt) {
         if (_state == ChannelState::Off || _state == ChannelState::Error) {
             _pwmDuty = 0.0f;
             _pwmDriver.setDutyCycle(_pwmDuty);
@@ -75,11 +85,8 @@ namespace Hephaestus {
 
         int16_t activeTarget = (_state == ChannelState::Sleep) ? _sleepTemp : _targetTemp;
 
-        if (_currentTemp < activeTarget) {
-            _pwmDuty = 100.0f;
-        } else {
-            _pwmDuty = 0.0f;
-        }
+        // Використовуємо ПІД замість релейного керування!
+        _pwmDuty = _pid.compute((float)activeTarget, (float)_currentTemp, dt);
 
         _pwmDriver.setDutyCycle(_pwmDuty);
     }

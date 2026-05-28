@@ -1,30 +1,38 @@
-//  App/Inc/system/system_config.hpp
+// App/Inc/system/system_config.hpp
 #pragma once
 #include <cstdint>
 
 namespace Hephaestus {
 
     struct SensorConfig {
-        // --- Калібрування Блока Живлення ---
-        float psuDividerRatio = 11.0f;     // Теоретично (100k + 10k) / 10k = 11.0
-        float psuVoltageOffset = 0.0f;     // Корекція в Вольтах (якщо АЦП або резистори мають похибку)
+        //  --- Попередні налаштування для PSU та NTC
+        float psuDividerRatio = 11.0f;     
+        float psuVoltageOffset = 0.0f;     
+        float ntcReferenceVoltage = 3.3f;  
+        float ntcTopResistor = 10000.0f;   
+        float ntcNominalRes = 10000.0f;    
+        float ntcNominalTemp = 298.15f;    
+        float ntcBeta = 3950.0f;           
 
-        // --- Калібрування Холодного спаю (NTC) ---
-        float ntcReferenceVoltage = 3.3f;  // Реальна напруга живлення дільника
-        float ntcTopResistor = 10000.0f;   // Верхній резистор (10k)
-        float ntcNominalRes = 10000.0f;    // Опір NTC при 25°C
-        float ntcNominalTemp = 298.15f;    // 25°C у Кельвінах
-        float ntcBeta = 3950.0f;           // B-коефіцієнт (Beta)
-
-        // --- Калібрування Паяльника (T12) ---
-        float ironOpAmpGain = 201.0f;      // 1 + (200k / 1k)
-        float ironOpAmpOffsetV = 0.0f;     // Напруга зміщення ОП (зсув нуля), у Вольтах на вході АЦП
-        float ironTcSensitivity = 0.041f;  // мВ на градус Цельсія (для типу К ~0.041)
+        //  --- Калібрування Паяльника (T12) ---
+        float ironOpAmpGain = 201.0f;      
+        float ironOpAmpOffsetV = 0.0f;     
+        float ironTcSensitivity = 0.041f;  
+        
+        // ПІД КОЕФІЦІЄНТИ (Розраховані за Зіглером-Нікольсом у Розділі 1)
+        float ironKp = 6.0f;
+        float ironKi = 30.534f;
+        float ironKd = 0.295f;
 
         // --- Калібрування Термофена (Air) ---
-        float airOpAmpGain = 101.0f;       // 1 + (100k / 1k) - Уточни за своєю схемою (наприклад, 100k і 1k)
-        float airOpAmpOffsetV = 0.0f;      // Напруга зміщення ОП
-        float airTcSensitivity = 0.041f;   // мВ на градус Цельсія
+        float airOpAmpGain = 101.0f;       
+        float airOpAmpOffsetV = 0.0f;      
+        float airTcSensitivity = 0.041f;   
+        
+        // ПІД КОЕФІЦІЄНТИ ДЛЯ ФЕНА
+        float airKp = 2.0f;
+        float airKi = 5.0f;
+        float airKd = 0.1f;
     };
 
     struct SystemConfig {

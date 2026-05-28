@@ -11,8 +11,10 @@ namespace Hephaestus {
                                    IPwm& ironPwm, IPwm& airPwm)
         : _adc(adc), _ironPin(ironPin), _airPin(airPin), 
           _ironEncoder(ironEnc), _airEncoder(airEnc),
-          _ironChannel("IRON", ironPwm, 300, 100, 450, 150),
-          _airChannel("AIR", airPwm, 300, 100, 500, 50)
+          _ironChannel("IRON", ironPwm, 300, 100, 450, 150, 
+                       _sysConfig.sensors.ironKp, _sysConfig.sensors.ironKi, _sysConfig.sensors.ironKd),
+          _airChannel("AIR", airPwm, 300, 100, 500, 50, 
+                      _sysConfig.sensors.airKp, _sysConfig.sensors.airKi, _sysConfig.sensors.airKd)
     {}
 
 void StationManager::init() {
@@ -46,7 +48,18 @@ void StationManager::init() {
         }
     }
 
+    // App/Src/logic/station_manager.cpp
+
     void StationManager::tickInput(uint32_t currentTickMs) {
+        static uint32_t lastTickMs = 0; 
+        
+        float dt = (float)(currentTickMs - lastTickMs) / 1000.0f;
+        lastTickMs = currentTickMs;
+
+        if (dt <= 0.0f || dt > 1.0f) {
+            dt = 0.015f; // Fallback на дефолтні 15 мс
+        }
+
         bool isIronPressed = _ironPin.isActive();
         bool isAirPressed  = _airPin.isActive();
 
@@ -70,8 +83,8 @@ void StationManager::init() {
         _ironChannel.setCurrentTemp(static_cast<int16_t>(ironTempC));
         _airChannel.setCurrentTemp(static_cast<int16_t>(airTempC));
 
-        _ironChannel.updateControlLoop();
-        _airChannel.updateControlLoop();
+        _ironChannel.updateControlLoop(dt);
+        _airChannel.updateControlLoop(dt);
     }
 
     void StationManager::tickDisplay() {

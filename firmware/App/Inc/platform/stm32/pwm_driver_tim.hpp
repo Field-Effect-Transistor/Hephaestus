@@ -30,5 +30,10 @@ namespace Hephaestus {
             
             __HAL_TIM_SET_COMPARE(_htim, _channel, compareValue);
         }
+
+        float getDutyCycle() const override {
+            uint32_t currentCompare = __HAL_TIM_GET_COMPARE(_htim, _channel);
+            return ((float)currentCompare / (float)(_htim->Init.Period + 1)) * 100.0f;
+        }
     };
 }
