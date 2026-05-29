@@ -67,11 +67,25 @@ namespace Hephaestus {
         }
 
         void applyHeat(float ironDuty, float airDuty, float dt) {
-            simulatedTempIron += (ironDuty * 1.5f * dt) - ((simulatedTempIron - 25.0f) * 0.1f * dt);
-            if (simulatedTempIron < 25.0f) simulatedTempIron = 25.0f;
+            const float IRON_HEAT_RATE = 150.0f;
+            const float AIR_HEAT_RATE  = 80.0f;
+            
+            const float IRON_COOL_RATE = 0.5f;
+            const float AIR_COOL_RATE  = 0.3f;
+            
+            const float AMBIENT_TEMP = 25.0f;
 
-            simulatedTempAir += (airDuty * 2.5f * dt) - ((simulatedTempAir - 25.0f) * 0.15f * dt);
-            if (simulatedTempAir < 25.0f) simulatedTempAir = 25.0f;
+            float ironHeat = (ironDuty / 100.0f) * IRON_HEAT_RATE;
+            float ironCool = (simulatedTempIron - AMBIENT_TEMP) * IRON_COOL_RATE;
+            
+            simulatedTempIron += (ironHeat - ironCool) * dt;
+            if (simulatedTempIron < AMBIENT_TEMP) simulatedTempIron = AMBIENT_TEMP;
+
+            float airHeat = (airDuty / 100.0f) * AIR_HEAT_RATE;
+            float airCool = (simulatedTempAir - AMBIENT_TEMP) * AIR_COOL_RATE;
+            
+            simulatedTempAir += (airHeat - airCool) * dt;
+            if (simulatedTempAir < AMBIENT_TEMP) simulatedTempAir = AMBIENT_TEMP;
         }
     };
 

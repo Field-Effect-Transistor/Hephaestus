@@ -2,3 +2,4 @@ build
 build_pc
 mx.scratch
 !.settings
+hephaestus_config.bin
