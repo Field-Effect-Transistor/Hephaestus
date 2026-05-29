@@ -85,11 +85,20 @@ namespace Hephaestus {
         IScreen* handleButton(ButtonEvent event, SystemContext& ctx) override;
     };
 
+    // --- ЕКРАН КАЛІБРУВАННЯ (Calibration) ---
+    class ScreenCalibration : public IScreen {
+    public:
+        void draw(u8g2_t* u8g2, const SystemContext& ctx) override;
+        void handleEncoder(int16_t steps, SystemContext& ctx) override;
+        IScreen* handleButton(ButtonEvent event, SystemContext& ctx) override;
+    };
+
     extern ScreenIronSetup screenIronSetup;
     extern ScreenAirSetup screenAirSetup;
     extern ScreenMain screenMain;
     extern ScreenMenu screenMenu;
     extern ScreenPidTuning screenPidTuning;
     extern ScreenSystemInfo screenSystemInfo;
+    extern ScreenCalibration screenCalibration;
 
 } // namespace Hephaestus

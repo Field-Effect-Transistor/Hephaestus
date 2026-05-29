@@ -11,6 +11,7 @@ namespace Hephaestus {
     ScreenSystemInfo screenSystemInfo;
     ScreenIronSetup screenIronSetup;
     ScreenAirSetup screenAirSetup;
+    ScreenCalibration screenCalibration;
 
     // ==========================================
     // SCREEN MAIN
@@ -131,6 +132,7 @@ namespace Hephaestus {
                 case 0: return &screenIronSetup; // Iron Setup
                 case 1: return &screenAirSetup;  // Air Setup
                 case 2: return &screenPidTuning; // PID Tuning
+                case 3: return &screenCalibration;  //  Calibration
                 case 4: return &screenSystemInfo;// System Info
                 case 5: // Exit
                     _cursorIdx = 0; 
@@ -309,6 +311,36 @@ namespace Hephaestus {
             } else {
                 _isEditing = !_isEditing; 
             }
+        }
+        return nullptr;
+    }
+
+    // ==========================================
+    // SCREEN CALIBRATION
+    // ==========================================
+    void ScreenCalibration::draw(u8g2_t* u8g2, const SystemContext& ctx) {
+        u8g2_SetFont(u8g2, u8g2_font_helvB08_tf);
+        u8g2_DrawStr(u8g2, 15, 10, "[ CALIBRATION ]");
+
+        // Поки що просто покажемо поточний зсув (Offset) ОП
+        char buf[32];
+        snprintf(buf, sizeof(buf), "Iron Offset: %.2fV", ctx.config.sensors.ironOpAmpOffsetV);
+        u8g2_DrawStr(u8g2, 5, 30, buf);
+
+        snprintf(buf, sizeof(buf), "Air Offset: %.2fV", ctx.config.sensors.airOpAmpOffsetV);
+        u8g2_DrawStr(u8g2, 5, 45, buf);
+
+        u8g2_DrawStr(u8g2, 5, 60, "> Back (Click)");
+    }
+
+    void ScreenCalibration::handleEncoder(int16_t steps, SystemContext& ctx) {
+        // У майбутньому тут можна буде гортати 3 точки калібрування 
+        // і змінювати масиви ctx.config.sensors.ironCalibReal[3]
+    }
+
+    IScreen* ScreenCalibration::handleButton(ButtonEvent event, SystemContext& ctx) {
+        if (event == ButtonEvent::SingleClick) {
+            return &screenMenu; // Повертаємось у меню
         }
         return nullptr;
     }
