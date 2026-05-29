@@ -7,31 +7,40 @@
 
 namespace Hephaestus {
 
-    // Всі можливі стани нагрівального каналу
     enum class ChannelState {
-        Off,      // Вимкнено (ШІМ = 0)
-        Active,   // Робочий режим (ПІД працює, тримає цільову темп.)
-        Sleep,    // Режим сну (знижена температура, наприклад 150°C)
-        Error     // Аварія (відключено через перегрів або обрив датчика)
+        Off,      
+        Active,   
+        Sleep,    
+        Error     // Аварія (Відключено Watchdog-ом)
     };
 
     class HeaterChannel {
     private:
-        const char*     _name;       // Назва для логування ("IRON" або "AIR")
+        const char*     _name;       
         IPwm&           _pwmDriver;
 
-        int16_t         _targetTemp; // Задана температура
-        int16_t         _currentTemp;// Поточна (реальна) температура
-        float           _pwmDuty;    // Відсоток потужності ШІМ (0-100)
-        ChannelState    _state;      // Поточний стан
+        int16_t         _targetTemp; 
+        int16_t         _currentTemp;
+        float           _pwmDuty;    
+        ChannelState    _state;      
         PidController   _pid;
 
-        const int16_t   _minTemp;   // Мінімальний ліміт температури
-        const int16_t   _maxTemp;   // Максимальний ліміт температури
+        const int16_t   _minTemp;   
+        const int16_t   _maxTemp;   
         int16_t         _sleepTemp;
         
-        uint16_t        _sleepTimeoutSec; // Час до сну в секундах
-        float           _idleTimeSec;     // Поточний час бездіяльності в секундах
+        uint16_t        _sleepTimeoutSec; 
+        float           _idleTimeSec;     
+
+        float           _watchdogTimerSec = 0.0f;
+        int16_t         _watchdogCheckpointTemp = 0;
+        
+        // Налаштування Watchdog-а
+        static constexpr float   WD_TIMEOUT_SEC = 3.0f;   // Час для перевірки (3 секунди)
+        static constexpr int16_t WD_MIN_TEMP_RISE = 5;    // Мінімальний приріст температури за цей час
+        static constexpr float   WD_PWM_THRESHOLD = 80.0f;// Мінімальний ШІМ, при якому вмикається перевірка
+
+        void checkThermalWatchdog(float dt);
 
     public:
         virtual ~HeaterChannel() = default;
@@ -48,12 +57,10 @@ namespace Hephaestus {
             uint16_t sleepTimeoutSec
         );
 
-        // Керування станом
         void toggleState();
         void setState(ChannelState newState);
         ChannelState getState() const { return _state; }
 
-        // Керування температурою
         void changeTargetTemp(int16_t delta);
         void setTargetTemp(int16_t newTemp);
         
@@ -62,7 +69,6 @@ namespace Hephaestus {
 
         void forcePwmOff() { _pwmDriver.setDutyCycle(0.0f); }
 
-        // Геттери
         int16_t getTargetTemp() const { return _targetTemp; }
         int16_t getCurrentTemp() const { return _currentTemp; }
         const char* getName() const { return _name; }

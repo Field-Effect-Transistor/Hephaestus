@@ -26,6 +26,8 @@ namespace Hephaestus {
         _sleepTemp(sleepTemp),
         _sleepTimeoutSec(sleepTimeoutSec),
         _idleTimeSec(0.0f),    
+        _watchdogTimerSec(0.0f),
+        _watchdogCheckpointTemp(0),
         _pid(kp, ki, kd, 0.0f, 100.0f)
     {
         if (_targetTemp < _minTemp) _targetTemp = _minTemp;
@@ -48,7 +50,11 @@ namespace Hephaestus {
 
     void HeaterChannel::setState(ChannelState newState) {
         if (_state == newState) return;
-        if (newState == ChannelState::Active) _pid.reset(); 
+        
+        if (newState == ChannelState::Active) {
+            _pid.reset(); 
+            _watchdogTimerSec = 0.0f;
+        }
         
         _state = newState;
 
@@ -79,6 +85,37 @@ namespace Hephaestus {
         }
     }
 
+    // --- ЛОГІКА ТЕРМАЛЬНОГО ЗАХИСТУ ---
+    void HeaterChannel::checkThermalWatchdog(float dt) {
+        // Якщо система "жарить" на високій потужності (> 80%)
+        if (_pwmDuty >= WD_PWM_THRESHOLD) {
+            
+            // Захоплюємо температуру на початку відліку
+            if (_watchdogTimerSec == 0.0f) {
+                _watchdogCheckpointTemp = _currentTemp;
+            }
+
+            _watchdogTimerSec += dt;
+
+            // Коли таймер вийшов
+            if (_watchdogTimerSec >= WD_TIMEOUT_SEC) {
+                int16_t tempRise = _currentTemp - _watchdogCheckpointTemp;
+
+                // Якщо температура не зросла на заданий мінімум - це АВАРІЯ
+                if (tempRise < WD_MIN_TEMP_RISE) {
+                    Logger::fatal("SAFETY", "[%s] THERMAL RUNAWAY DETECTED! Shutting down.", _name);
+                    setState(ChannelState::Error);
+                } else {
+                    // Температура росте нормально. Скидаємо таймер і чекпойнт.
+                    _watchdogTimerSec = 0.0f;
+                }
+            }
+        } else {
+            // Якщо потужність падає нижче 80% - ПІД працює нормально, знімаємо "підозру"
+            _watchdogTimerSec = 0.0f;
+        }
+    }
+
     void HeaterChannel::updateControlLoop(float dt) {
         if (_state == ChannelState::Off || _state == ChannelState::Error) {
             _pwmDuty = 0.0f;
@@ -95,7 +132,15 @@ namespace Hephaestus {
         }
 
         int16_t activeTarget = (_state == ChannelState::Sleep) ? _sleepTemp : _targetTemp;
+        
         _pwmDuty = _pid.compute((float)activeTarget, (float)_currentTemp, dt);
+
+        checkThermalWatchdog(dt);
+
+        if (_state == ChannelState::Error) {
+            _pwmDuty = 0.0f;
+        }
+
         _pwmDriver.setDutyCycle(_pwmDuty);
     }
 

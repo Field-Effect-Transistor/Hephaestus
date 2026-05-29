@@ -14,12 +14,12 @@ namespace Hephaestus {
         void* _renderer = nullptr;
         
         // Віртуальні стани апаратури
-        bool    _ironBtnPressed = false;
-        bool    _airBtnPressed  = false;
-        int16_t _ironEncDiff = 0;
-        int16_t _airEncDiff  = 0;
-        bool    _ironInHand = false; 
-        bool    _airInHand  = false; 
+        std::atomic<bool>    _ironBtnPressed{false};
+        std::atomic<bool>    _airBtnPressed{false};
+        std::atomic<int16_t> _ironEncDiff{0};
+        std::atomic<int16_t> _airEncDiff{0};
+        std::atomic<bool>    _ironInHand{false}; 
+        std::atomic<bool>    _airInHand{false}; 
 
         // Буфер екрану (128x64 / 8 біт = 1024 байти) та прапорець оновлення
         uint8_t           _framebuffer[128 * 8] = {};
@@ -42,10 +42,11 @@ namespace Hephaestus {
         // Інтерфейси для Mocks
         bool isIronPressed() const { return _ironBtnPressed; }
         bool isAirPressed()  const { return _airBtnPressed; }
-        int16_t getIronEncDiff();
-        int16_t getAirEncDiff();
         bool isIronInHand() const { return _ironInHand; }
         bool isAirInHand()  const { return _airInHand; }
+
+        int16_t getIronEncDiff();
+        int16_t getAirEncDiff();
     };
 
 } // namespace Hephaestus

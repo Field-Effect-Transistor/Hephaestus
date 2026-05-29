@@ -34,16 +34,18 @@ namespace Hephaestus {
             float adcVolts,
             float opAmpGain,
             float opAmpOffsetV,
-            float sensitivity, float coldJunctionTempC) 
+            float coldJunctionTempC) 
         {
             float correctedVolts = adcVolts - opAmpOffsetV;
             if (correctedVolts < 0.0f) correctedVolts = 0.0f;
 
             float tcVolts = correctedVolts / opAmpGain;
-            
-            float tcMillivolts = tcVolts * 1000.0f;
+            float mv = tcVolts * 1000.0f;
 
-            float tcTempC = tcMillivolts / sensitivity; 
+            // Спрощений поліном для термопари К-типу (0 - 500C)
+            // Т = 25.0836 * V - 0.0786 * V^2 + 0.2503 * V^3
+            // Оптимізовано схемою Горнера для зменшення кількості множень у STM32
+            float tcTempC = mv * (25.0836f + mv * (-0.0786f + 0.2503f * mv));
 
             return coldJunctionTempC + tcTempC;
         }

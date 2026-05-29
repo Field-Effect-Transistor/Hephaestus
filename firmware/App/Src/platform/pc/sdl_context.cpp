@@ -27,15 +27,10 @@ namespace Hephaestus {
     void SdlContext::drawFrame() {
         auto ren = static_cast<SDL_Renderer*>(_renderer);
         
-        // Очищення фону
         SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
         SDL_RenderClear(ren);
-        
-        // Колір пікселів дисплея
         SDL_SetRenderDrawColor(ren, 0, 200, 255, 255);
 
-        // Парсинг пам'яті u8g2: 8 сторінок по вертикалі, 128 колонок.
-        // Кожен байт кодує стовпчик з 8 пікселів (LSB зверху).
         for (int y = 0; y < 64; y++) {
             for (int x = 0; x < 128; x++) {
                 int page = y / 8;
@@ -52,58 +47,49 @@ namespace Hephaestus {
     void SdlContext::runLoop() {
         SDL_Event e;
         while (true) {
-            // 1. Обробка вводу (SDL вимагає робити це в тому ж потоці, де створено вікно)
             while (SDL_PollEvent(&e)) {
                 if (e.type == SDL_QUIT) exit(0);
 
                 if (e.type == SDL_KEYDOWN) {
                     switch (e.key.keysym.sym) {
-                        case SDLK_RETURN: _ironBtnPressed = true;  break;
-                        case SDLK_SPACE:  _airBtnPressed  = true;  break;
-                        case SDLK_UP:     _ironEncDiff = 1;  break;
-                        case SDLK_DOWN:   _ironEncDiff = -1; break;
-                        case SDLK_w:      _airEncDiff  = 1;  break;
-                        case SDLK_s:      _airEncDiff  = -1; break;
-                        case SDLK_i:      _ironInHand = !_ironInHand; break;
-                        case SDLK_a:      _airInHand  = !_airInHand;  break;
+                        case SDLK_RETURN: _ironBtnPressed.store(true);  break;
+                        case SDLK_SPACE:  _airBtnPressed.store(true);   break;
+                        case SDLK_UP:     _ironEncDiff.fetch_add(1);    break;
+                        case SDLK_DOWN:   _ironEncDiff.fetch_sub(1);    break;
+                        case SDLK_w:      _airEncDiff.fetch_add(1);     break;
+                        case SDLK_s:      _airEncDiff.fetch_sub(1);     break;
+                        case SDLK_i:      _ironInHand.store(!_ironInHand.load()); break;
+                        case SDLK_a:      _airInHand.store(!_airInHand.load());  break;
                     }
                 }
                 if (e.type == SDL_KEYUP) {
                     switch (e.key.keysym.sym) {
-                        case SDLK_RETURN: _ironBtnPressed = false; break;
-                        case SDLK_SPACE:  _airBtnPressed  = false; break;
+                        case SDLK_RETURN: _ironBtnPressed.store(false); break;
+                        case SDLK_SPACE:  _airBtnPressed.store(false);  break;
                     }
                 }
             }
 
-            // 2. Відмальовка нового кадру (якщо RTOS-задача надіслала дані)
             if (_frameDirty.exchange(false)) {
                 drawFrame();
             }
 
-            // Розвантажуємо ядро ПК
             SDL_Delay(10);
         }
     }
 
     void SdlContext::submitBuffer(const uint8_t* buffer) {
         if (!buffer) return;
-        // Швидке копіювання буфера з потоку RTOS
         std::memcpy(_framebuffer, buffer, sizeof(_framebuffer));
-        _frameDirty.store(true); // Сигналізуємо Main Thread, що можна малювати
+        _frameDirty.store(true);
     }
 
-    // Забираємо дельту енкодерів і відразу очищаємо
     int16_t SdlContext::getIronEncDiff() {
-        int16_t d = _ironEncDiff; 
-        _ironEncDiff = 0; 
-        return d;
+        return _ironEncDiff.exchange(0);
     }
     
     int16_t SdlContext::getAirEncDiff() {
-        int16_t d = _airEncDiff; 
-        _airEncDiff = 0; 
-        return d;
+        return _airEncDiff.exchange(0);
     }
 
 } // namespace Hephaestus

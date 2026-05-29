@@ -15,7 +15,6 @@ namespace Hephaestus {
           _ironPin(ironPin), _airPin(airPin), 
           _ironStandPin(ironStandPin), _airStandPin(airStandPin),
           _ironEncoder(ironEnc), _airEncoder(airEnc),
-          // При створенні ми використовуємо дефолтні температури (300), але відразу ж їх перезапишемо нижче!
           _ironChannel("IRON", ironPwm, 300, 100, 450, 150, 
                        _sysConfig.sensors.ironKp, _sysConfig.sensors.ironKi, _sysConfig.sensors.ironKd, _sysConfig.sensors.ironSleepTimeoutSec),
           _airChannel("AIR", airPwm, airFanPwm, 300, 100, 500, 50, 
@@ -40,19 +39,41 @@ namespace Hephaestus {
         Logger::info("SYS", "StationManager initialized (Hardware)");
     }
 
+    void StationManager::requestConfigSave() {
+        _pendingSave = true;
+        _saveCountdownSec = SAVE_DELAY_SEC;
+    }
+
+    void StationManager::processPendingSave(float dt) {
+        if (!_pendingSave) return;
+        
+        _saveCountdownSec -= dt;
+        
+        if (_saveCountdownSec <= 0.0f) {
+            _pendingSave = false;
+            
+            _sysConfig.user.ironTargetTemp = _ironChannel.getTargetTemp();
+            _sysConfig.user.airTargetTemp  = _airChannel.getTargetTemp();
+            _sysConfig.user.airFanSpeed    = _airChannel.getFanSpeed();
+            
+            if (_storage.save(_sysConfig)) {
+                Logger::info("SYS", "Config saved to Flash (Deferred).");
+            } else {
+                Logger::error("SYS", "Config save to Flash FAILED!");
+            }
+        }
+    }
+
     void StationManager::handleButton(HeaterChannel& channel, ButtonEvent event, bool isIron) {
         if (event == ButtonEvent::None) return;
 
         channel.resetIdleTimer();
 
+        requestConfigSave();
+
         if (_display.getCurrentScreen() != &screenMain) {
             if (isIron) {
-                IScreen* oldScreen = _display.getCurrentScreen();
                 _display.dispatchButton(event);
-                if (oldScreen != &screenMain && _display.getCurrentScreen() == &screenMain) {
-                    Logger::info("SYS", "Exited menu. Saving config to storage.");
-                    _storage.save(_sysConfig);
-                }
             }
             return;
         }
@@ -64,44 +85,20 @@ namespace Hephaestus {
             IScreen* next = screenMain.handleAirButton(event, _systemContext);
             if (next) _display.setScreen(next);
         }
-
-        if (event == ButtonEvent::SingleClick || event == ButtonEvent::DoubleClick || event == ButtonEvent::LongPress) {
-            bool needsSave = false;
-            
-            // Перевіряємо, чи змінилася цільова температура відносно тої, що в конфігу
-            if (_sysConfig.user.ironTargetTemp != _ironChannel.getTargetTemp()) {
-                _sysConfig.user.ironTargetTemp = _ironChannel.getTargetTemp();
-                needsSave = true;
-            }
-            if (_sysConfig.user.airTargetTemp != _airChannel.getTargetTemp()) {
-                _sysConfig.user.airTargetTemp = _airChannel.getTargetTemp();
-                needsSave = true;
-            }
-            if (_sysConfig.user.airFanSpeed != _airChannel.getFanSpeed()) {
-                _sysConfig.user.airFanSpeed = _airChannel.getFanSpeed();
-                needsSave = true;
-            }
-
-            if (needsSave) {
-                Logger::info("SYS", "Target temp changed. Saving to storage.");
-                _storage.save(_sysConfig);
-            }
-        }
     }
 
     void StationManager::handleEncoder(HeaterChannel& channel, EncoderResult enc, bool isPressed, bool isIron) {
         if (!enc.hasMovement()) return;
 
-        // Визначаємо величину кроку (з прискоренням або без)
+        requestConfigSave();
+
         int16_t steps = isPressed ? (enc.raw > 0 ? 50 : -50) : enc.accelerated;
 
-        // Якщо ми не на головному екрані (наприклад, у меню) - віддаємо туди
         if (_display.getCurrentScreen() != &screenMain) {
-            if (isIron) _display.dispatchEncoder(enc.raw); // У меню прискорення не потрібне
+            if (isIron) _display.dispatchEncoder(enc.raw); 
             return;
         }
 
-        // Якщо ми на головному екрані
         if (isIron) {
             screenMain.handleEncoder(steps, _systemContext);
         } else {
@@ -124,25 +121,18 @@ namespace Hephaestus {
         EncoderResult ironEnc = _ironEncoder.getSteps();
         EncoderResult airEnc  = _airEncoder.getSteps();
 
-        // Обробка подій
         handleButton(_ironChannel, ironEvent, true);
         handleButton(_airChannel, airEvent, false);
         handleEncoder(_ironChannel, ironEnc, isIronPressed, true);
         handleEncoder(_airChannel, airEnc, isAirPressed, false);
 
-        // --- ЛОГІКА СЕНСОРІВ ПІДСТАВКИ ---
-        
-        // Для ПАЯЛЬНИКА: 
         if (_ironStandPin.isActive()) {
             _ironChannel.resetIdleTimer();
         }
 
-        // Для ФЕНА:
         if (_airStandPin.isActive()) {
-            // Фен відразу відправляємо спати (миттєвий сон для безпеки)
             _airChannel.setState(ChannelState::Sleep);
         } else {
-            // Фен зняли з підставки (рука) - скидаємо таймер і він автоматично прокидається
             _airChannel.resetIdleTimer();
             if (_airChannel.getState() == ChannelState::Sleep) {
                 _airChannel.setState(ChannelState::Active);
@@ -156,32 +146,30 @@ namespace Hephaestus {
         lastTickMs = currentTickMs;
         if (dt <= 0.0f || dt > 1.0f) dt = 0.05f;
 
-        // 1. АЛГОРИТМ ЧАСОВОГО РОЗДІЛЕННЯ (TDM)
+        processPendingSave(dt);
+
         _ironChannel.forcePwmOff();
         vTaskDelay(pdMS_TO_TICKS(2));
 
-        // 2. БЕЗПЕЧНЕ ЧИТАННЯ АЦП 
         float ironVolts = _adc.readVoltage(2);
         float airVolts  = _adc.readVoltage(3);
         float psuAdcVolts = _adc.readVoltage(0);
         float ntcAdcVolts = _adc.readVoltage(1);
 
-        // 3. МАТЕМАТИКА
         _systemContext.psuVoltage = MathSensors::calculatePsuVoltage(psuAdcVolts, _sysConfig.sensors);
         _systemContext.ambientTempC = MathSensors::calculateNtcTempC(ntcAdcVolts, _sysConfig.sensors);
 
         float ironTempC = MathSensors::calculateThermocoupleTemp(
             ironVolts, _sysConfig.sensors.ironOpAmpGain, _sysConfig.sensors.ironOpAmpOffsetV, 
-            _sysConfig.sensors.ironTcSensitivity, _systemContext.ambientTempC);
+            _systemContext.ambientTempC);
             
         float airTempC  = MathSensors::calculateThermocoupleTemp(
             airVolts, _sysConfig.sensors.airOpAmpGain, _sysConfig.sensors.airOpAmpOffsetV, 
-            _sysConfig.sensors.airTcSensitivity, _systemContext.ambientTempC);
+            _systemContext.ambientTempC);
 
         _ironChannel.setCurrentTemp(static_cast<int16_t>(ironTempC));
         _airChannel.setCurrentTemp(static_cast<int16_t>(airTempC));
 
-        // 4. ПІД-РЕГУЛЯТОР ТА УВІМКНЕННЯ ШІМ
         _ironChannel.updateControlLoop(dt);
         _airChannel.updateControlLoop(dt);
     }

@@ -1,4 +1,4 @@
-//  App/Inc/logic/station_manager.hpp
+// App/Inc/logic/station_manager.hpp
 #pragma once
 
 #include "interfaces/IAdc.hpp"
@@ -39,8 +39,15 @@ namespace Hephaestus {
         
         DisplayManager _display;
 
-    void handleButton(HeaterChannel& channel, ButtonEvent event, bool isIron);
-    void handleEncoder(HeaterChannel& channel, EncoderResult enc, bool isPressed, bool isIron);
+        bool  _pendingSave = false;
+        float _saveCountdownSec = 0.0f;
+        static constexpr float SAVE_DELAY_SEC = 5.0f;
+
+        void handleButton(HeaterChannel& channel, ButtonEvent event, bool isIron);
+        void handleEncoder(HeaterChannel& channel, EncoderResult enc, bool isPressed, bool isIron);
+
+        void requestConfigSave();          
+        void processPendingSave(float dt); 
 
     public:
         StationManager( IStorage& storage,
