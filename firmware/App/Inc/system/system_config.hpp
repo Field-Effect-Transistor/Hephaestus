@@ -37,6 +37,14 @@ namespace Hephaestus {
         // --- Налаштування Сну ---
         uint16_t ironSleepTimeoutSec = 180; // 3 хвилини (180 сек) бездіяльності для паяльника
         uint16_t airSleepTimeoutSec = 300;  // 5 хвилин (300 сек) бездіяльності для фена
+
+        // Точки калібрування паяльника
+        float ironCalibRaw[3]  = { 200.0f, 300.0f, 400.0f };
+        float ironCalibReal[3] = { 200.0f, 300.0f, 400.0f };
+
+        // Точки калібрування фена
+        float airCalibRaw[3]   = { 200.0f, 300.0f, 400.0f };
+        float airCalibReal[3]  = { 200.0f, 300.0f, 400.0f };
     };
 
     struct UserSettings {

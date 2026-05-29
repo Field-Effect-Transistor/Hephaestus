@@ -49,6 +49,29 @@ namespace Hephaestus {
 
             return coldJunctionTempC + tcTempC;
         }
+
+        static float applyCalibration(float rawTemp, const float calRaw[3], const float calReal[3]) {
+            // Якщо температура нижча за першу точку (екстраполяція вниз)
+            if (rawTemp <= calRaw[0]) {
+                float k = (calReal[1] - calReal[0]) / (calRaw[1] - calRaw[0]);
+                return calReal[0] + k * (rawTemp - calRaw[0]);
+            }
+            // Якщо температура між 1 і 2 точкою
+            else if (rawTemp <= calRaw[1]) {
+                float k = (calReal[1] - calReal[0]) / (calRaw[1] - calRaw[0]);
+                return calReal[0] + k * (rawTemp - calRaw[0]);
+            }
+            // Якщо температура між 2 і 3 точкою
+            else if (rawTemp <= calRaw[2]) {
+                float k = (calReal[2] - calReal[1]) / (calRaw[2] - calRaw[1]);
+                return calReal[1] + k * (rawTemp - calRaw[1]);
+            }
+            // Якщо вище 3 точки (екстраполяція вгору)
+            else {
+                float k = (calReal[2] - calReal[1]) / (calRaw[2] - calRaw[1]);
+                return calReal[2] + k * (rawTemp - calRaw[2]);
+            }
+        }
     };
 
 } // namespace Hephaestus

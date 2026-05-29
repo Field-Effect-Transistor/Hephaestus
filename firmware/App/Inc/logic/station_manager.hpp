@@ -10,6 +10,7 @@
 #include "logic/button.hpp"
 #include "logic/heater_channel.hpp"
 #include "logic/hot_air_channel.hpp"
+#include "logic/buzzer_manager.hpp"
 #include "ui/display_manager.hpp"
 #include "ui/screens.hpp"
 #include "system/system_config.hpp"
@@ -19,25 +20,26 @@ namespace Hephaestus {
 
     class StationManager {
     private:
-        IStorage&      _storage;
-        SystemConfig   _sysConfig; 
-        SystemContext  _systemContext;
+        IStorage&       _storage;
+        SystemConfig    _sysConfig; 
+        SystemContext   _systemContext;
 
-        IAdc&        _adc;
-        IDigitalPin& _ironPin;
-        IDigitalPin& _airPin;
-        IDigitalPin& _ironStandPin; 
-        IDigitalPin& _airStandPin;
-        IEncoder&    _ironEncoder;
-        IEncoder&    _airEncoder;
+        IAdc&           _adc;
+        IDigitalPin&    _ironPin;
+        IDigitalPin&    _airPin;
+        IDigitalPin&    _ironStandPin; 
+        IDigitalPin&    _airStandPin;
+        IEncoder&       _ironEncoder;
+        IEncoder&       _airEncoder;
 
-        Button        _ironBtn;
-        Button        _airBtn;
+        Button          _ironBtn;
+        Button          _airBtn;
         
-        HeaterChannel _ironChannel;
-        HotAirChannel _airChannel;
+        HeaterChannel   _ironChannel;
+        HotAirChannel   _airChannel;
         
-        DisplayManager _display;
+        DisplayManager  _display;
+        BuzzerManager   _buzzer;
 
         bool  _pendingSave = false;
         float _saveCountdownSec = 0.0f;
@@ -50,12 +52,12 @@ namespace Hephaestus {
         void processPendingSave(float dt); 
 
     public:
-        StationManager( IStorage& storage,
-                        IAdc& adc, 
-                        IDigitalPin& ironPin, IDigitalPin& airPin, 
-                        IDigitalPin& ironStandPin, IDigitalPin& airStandPin,
-                        IEncoder& ironEnc, IEncoder& airEnc, 
-                        IPwm& ironPwm, IPwm& airPwm, IPwm& airFanPwm);
+        StationManager(IStorage& storage, IAdc& adc, 
+                IDigitalPin& ironPin, IDigitalPin& airPin, 
+                IDigitalPin& ironStandPin, IDigitalPin& airStandPin,
+                IEncoder& ironEnc, IEncoder& airEnc, 
+                IPwm& ironPwm, IPwm& airPwm, IPwm& airFanPwm,
+                IPwm& buzzerPwm);
 
         void init();
         void initDisplay();

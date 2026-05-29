@@ -33,13 +33,14 @@ static Hephaestus::EncoderTim airEncoder(&htim4);
 static Hephaestus::PwmDriverTim airFanPwm(&htim3, TIM_CHANNEL_3);
 static Hephaestus::PwmDriverTim ironPwm(&htim1, TIM_CHANNEL_1);
 static Hephaestus::PwmDriverTim airPwm(&htim1, TIM_CHANNEL_4);
+static Hephaestus::PwmDriverTim buzzerPwm(&htim2, TIM_CHANNEL_2); 
 static Hephaestus::GpioPin ironStandPin(GPIOA, GPIO_PIN_4, true);
 static Hephaestus::GpioPin airStandPin(GPIOA, GPIO_PIN_5, true);
 
 static Hephaestus::FlashStorage storage;
 
 static Hephaestus::StationManager station(
-    storage, adc, ironPin, airPin, ironStandPin, airStandPin, ironEncoder, airEncoder, ironPwm, airPwm, airFanPwm
+    storage, adc, ironPin, airPin, ironStandPin, airStandPin, ironEncoder, airEncoder, ironPwm, airPwm, airFanPwm, buzzerPwm
 );
 
 // RTOS Tasks

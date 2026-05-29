@@ -106,6 +106,7 @@ static Hephaestus::SdlEncoderAir  encAir;
 static Hephaestus::MockPwm        ironPwm;
 static Hephaestus::MockPwm        airPwm;
 static Hephaestus::MockPwm        airFanPwm;
+static Hephaestus::MockPwm        buzzerPwm;
 static Hephaestus::ConsoleLogSink consoleSink;
 static Hephaestus::SdlStandPinIron standIron;
 static Hephaestus::SdlStandPinAir  standAir;
@@ -113,7 +114,7 @@ static Hephaestus::SdlStandPinAir  standAir;
 static Hephaestus::FileStorage    storage;
 
 static Hephaestus::StationManager station(
-    storage, mockAdc, pinIron, pinAir, standIron, standAir, encIron, encAir, ironPwm, airPwm, airFanPwm
+    storage, mockAdc, pinIron, pinAir, standIron, standAir, encIron, encAir, ironPwm, airPwm, airFanPwm, buzzerPwm
 );
 
 // --- ЗАДАЧІ FREERTOS ---

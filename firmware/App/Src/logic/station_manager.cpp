@@ -10,7 +10,7 @@ namespace Hephaestus {
         IDigitalPin& ironPin, IDigitalPin& airPin, 
         IDigitalPin& ironStandPin, IDigitalPin& airStandPin, 
         IEncoder& ironEnc, IEncoder& airEnc, 
-        IPwm& ironPwm, IPwm& airPwm, IPwm& airFanPwm)
+        IPwm& ironPwm, IPwm& airPwm, IPwm& airFanPwm, IPwm& buzzerPwm)
         : _storage(storage), _adc(adc), 
           _ironPin(ironPin), _airPin(airPin), 
           _ironStandPin(ironStandPin), _airStandPin(airStandPin),
@@ -19,6 +19,7 @@ namespace Hephaestus {
                        _sysConfig.sensors.ironKp, _sysConfig.sensors.ironKi, _sysConfig.sensors.ironKd, _sysConfig.sensors.ironSleepTimeoutSec),
           _airChannel("AIR", airPwm, airFanPwm, 300, 100, 500, 50, 
                       _sysConfig.sensors.airKp, _sysConfig.sensors.airKi, _sysConfig.sensors.airKd, _sysConfig.sensors.airSleepTimeoutSec),
+          _buzzer(buzzerPwm), // Ініціалізуємо зумер
           _systemContext{_ironChannel, _airChannel, _sysConfig}
     {
         if (_storage.load(_sysConfig)) {
@@ -70,6 +71,12 @@ namespace Hephaestus {
         channel.resetIdleTimer();
 
         requestConfigSave();
+        
+        if (event == ButtonEvent::SingleClick || event == ButtonEvent::DoubleClick) {
+            _buzzer.play(BuzzerSound::ShortBeep, HAL_GetTick());
+        }
+
+        channel.resetIdleTimer();
 
         if (_display.getCurrentScreen() != &screenMain) {
             if (isIron) {
@@ -138,6 +145,8 @@ namespace Hephaestus {
                 _airChannel.setState(ChannelState::Active);
             }
         }
+        
+        _buzzer.tick(currentTickMs);
     }
 
     void StationManager::tickControl(uint32_t currentTickMs) {
@@ -162,6 +171,14 @@ namespace Hephaestus {
         float ironTempC = MathSensors::calculateThermocoupleTemp(
             ironVolts, _sysConfig.sensors.ironOpAmpGain, _sysConfig.sensors.ironOpAmpOffsetV, 
             _systemContext.ambientTempC);
+            
+        ironTempC = MathSensors::applyCalibration(
+            ironTempC, 
+            _sysConfig.sensors.ironCalibRaw, 
+            _sysConfig.sensors.ironCalibReal
+        );
+
+        _ironChannel.setCurrentTemp(static_cast<int16_t>(ironTempC));
             
         float airTempC  = MathSensors::calculateThermocoupleTemp(
             airVolts, _sysConfig.sensors.airOpAmpGain, _sysConfig.sensors.airOpAmpOffsetV, 
