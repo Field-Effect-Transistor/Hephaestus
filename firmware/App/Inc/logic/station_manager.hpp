@@ -8,6 +8,7 @@
 
 #include "logic/button.hpp"
 #include "logic/heater_channel.hpp"
+#include "logic/hot_air_channel.hpp"
 #include "ui/display_manager.hpp"
 #include "ui/screens.hpp"
 #include "system/system_config.hpp"
@@ -23,6 +24,8 @@ namespace Hephaestus {
         IAdc&        _adc;
         IDigitalPin& _ironPin;
         IDigitalPin& _airPin;
+        IDigitalPin& _ironStandPin; 
+        IDigitalPin& _airStandPin;
         IEncoder&    _ironEncoder;
         IEncoder&    _airEncoder;
 
@@ -30,7 +33,7 @@ namespace Hephaestus {
         Button        _airBtn;
         
         HeaterChannel _ironChannel;
-        HeaterChannel _airChannel;
+        HotAirChannel _airChannel;
         
         DisplayManager _display;
 
@@ -40,8 +43,9 @@ namespace Hephaestus {
     public:
         StationManager(IAdc& adc, 
                        IDigitalPin& ironPin, IDigitalPin& airPin, 
+                       IDigitalPin& ironStandPin, IDigitalPin& airStandPin,
                        IEncoder& ironEnc, IEncoder& airEnc, 
-                       IPwm& ironPwm, IPwm& airPwm);
+                       IPwm& ironPwm, IPwm& airPwm, IPwm& airFanPwm);
 
         void init();
         void initDisplay();

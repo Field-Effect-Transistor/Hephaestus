@@ -28,9 +28,13 @@ namespace Hephaestus {
 
         const int16_t   _minTemp;   // Мінімальний ліміт температури
         const int16_t   _maxTemp;   // Максимальний ліміт температури
-        const int16_t   _sleepTemp; // Температура для режиму сну
+        int16_t         _sleepTemp;
+        
+        uint16_t        _sleepTimeoutSec; // Час до сну в секундах
+        float           _idleTimeSec;     // Поточний час бездіяльності в секундах
 
     public:
+        virtual ~HeaterChannel() = default;
         HeaterChannel(
             const char* name,
             IPwm& pwmDriver, 
@@ -40,7 +44,8 @@ namespace Hephaestus {
             int16_t sleepTemp,
             float kp,
             float ki, 
-            float kd
+            float kd,
+            uint16_t sleepTimeoutSec
         );
 
         // Керування станом
@@ -53,7 +58,7 @@ namespace Hephaestus {
         void setTargetTemp(int16_t newTemp);
         
         void setCurrentTemp(int16_t temp) { _currentTemp = temp; }
-        void updateControlLoop(float dt);
+        virtual void updateControlLoop(float dt);
 
         void forcePwmOff() { _pwmDriver.setDutyCycle(0.0f); }
 
@@ -61,6 +66,13 @@ namespace Hephaestus {
         int16_t getTargetTemp() const { return _targetTemp; }
         int16_t getCurrentTemp() const { return _currentTemp; }
         const char* getName() const { return _name; }
+        void setSleepTemp(int16_t temp) { _sleepTemp = temp; }
+        int16_t getSleepTemp() const { return _sleepTemp; }
+        int16_t getMaxTemp() const { return _maxTemp; }
+
+        void resetIdleTimer() { _idleTimeSec = 0.0f; }
+        void setSleepTimeout(uint16_t sec) { _sleepTimeoutSec = sec; }
+        uint16_t getSleepTimeout() const { return _sleepTimeoutSec; }
     };
 
 } // namespace Hephaestus

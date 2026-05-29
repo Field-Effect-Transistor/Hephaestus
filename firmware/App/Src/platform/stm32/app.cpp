@@ -28,12 +28,14 @@ static Hephaestus::GpioPin airPin(GPIOB, GPIO_PIN_13);
 static Hephaestus::EncoderTim ironEncoder(&htim2);
 static Hephaestus::EncoderTim airEncoder(&htim4);
 
+static Hephaestus::PwmDriverTim airFanPwm(&htim3, TIM_CHANNEL_3);
 static Hephaestus::PwmDriverTim ironPwm(&htim1, TIM_CHANNEL_1);
 static Hephaestus::PwmDriverTim airPwm(&htim1, TIM_CHANNEL_4);
+static Hephaestus::GpioPin ironStandPin(GPIOA, GPIO_PIN_4, true);
+static Hephaestus::GpioPin airStandPin(GPIOA, GPIO_PIN_5, true);
 
-// System controller instantiation
 static Hephaestus::StationManager station(
-    adc, ironPin, airPin, ironEncoder, airEncoder, ironPwm, airPwm
+    adc, ironPin, airPin, ironStandPin, airStandPin, ironEncoder, airEncoder, ironPwm, airPwm, airFanPwm
 );
 
 // RTOS Tasks
@@ -71,6 +73,7 @@ extern "C" void app_setup() {
 
     ironPwm.enable(true);
     airPwm.enable(true);
+    airFanPwm.enable(true);
 
     station.init();
 

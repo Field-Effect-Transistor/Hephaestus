@@ -33,6 +33,10 @@ namespace Hephaestus {
         float airKp = 2.0f;
         float airKi = 5.0f;
         float airKd = 0.1f;
+
+        // --- Налаштування Сну ---
+        uint16_t ironSleepTimeoutSec = 180; // 3 хвилини (180 сек) бездіяльності для паяльника
+        uint16_t airSleepTimeoutSec = 300;  // 5 хвилин (300 сек) бездіяльності для фена
     };
 
     struct SystemConfig {

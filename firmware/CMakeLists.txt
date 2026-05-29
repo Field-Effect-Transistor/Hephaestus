@@ -39,6 +39,7 @@ if(BUILD_SIMULATOR)
         App/Src/logic/station_manager.cpp
         App/Src/logic/button.cpp
         App/Src/logic/heater_channel.cpp
+        App/Src/logic/hot_air_channel.cpp
         
         # UI & Logging
         App/Src/ui/display_manager.cpp
@@ -101,6 +102,7 @@ else()
         App/Src/logic/station_manager.cpp
         App/Src/logic/button.cpp
         App/Src/logic/heater_channel.cpp
+        App/Src/logic/hot_air_channel.cpp
         
         # UI & Logging
         App/Src/ui/display_manager.cpp

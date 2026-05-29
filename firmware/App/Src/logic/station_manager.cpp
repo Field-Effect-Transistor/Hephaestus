@@ -7,15 +7,18 @@ namespace Hephaestus {
 
     StationManager::StationManager(IAdc& adc, 
                                    IDigitalPin& ironPin, IDigitalPin& airPin, 
+                                   IDigitalPin& ironStandPin, IDigitalPin& airStandPin,
                                    IEncoder& ironEnc, IEncoder& airEnc, 
-                                   IPwm& ironPwm, IPwm& airPwm)
+                                   IPwm& ironPwm, IPwm& airPwm, IPwm& airFanPwm)
         : _adc(adc), _ironPin(ironPin), _airPin(airPin), 
           _ironEncoder(ironEnc), _airEncoder(airEnc),
           _ironChannel("IRON", ironPwm, 300, 100, 450, 150, 
-                       _sysConfig.sensors.ironKp, _sysConfig.sensors.ironKi, _sysConfig.sensors.ironKd),
-          _airChannel("AIR", airPwm, 300, 100, 500, 50, 
-                      _sysConfig.sensors.airKp, _sysConfig.sensors.airKi, _sysConfig.sensors.airKd),
-                      _systemContext{_ironChannel, _airChannel, _sysConfig}
+                       _sysConfig.sensors.ironKp, _sysConfig.sensors.ironKi, _sysConfig.sensors.ironKd, _sysConfig.sensors.ironSleepTimeoutSec),
+          _ironStandPin(ironStandPin), _airStandPin(airStandPin), 
+          _airChannel("AIR", airPwm, airFanPwm, 300, 100, 500, 50, 
+                      _sysConfig.sensors.airKp, _sysConfig.sensors.airKi, _sysConfig.sensors.airKd,
+                      _sysConfig.sensors.airSleepTimeoutSec), // <--- ДОДАНО
+          _systemContext{_ironChannel, _airChannel, _sysConfig}
     {}
 
     void StationManager::init() {
@@ -25,44 +28,47 @@ namespace Hephaestus {
     }
 
     void StationManager::handleButton(HeaterChannel& channel, ButtonEvent event, bool isIron) {
-        // Завжди передаємо кнопку в дисплей (можливо, ми в меню і треба клікнути "Exit")
-        if (isIron) {
-            _display.dispatchButton(event);
+        if (event == ButtonEvent::None) return;
+
+        // Якщо ми в меню або інших екранах - віддаємо керування їм (тільки кнопці паяльника)
+        if (_display.getCurrentScreen() != &screenMain) {
+            if (isIron) _display.dispatchButton(event);
+            return;
         }
 
-        // Якщо ми НА ГОЛОВНОМУ ЕКРАНІ, кнопки керують каналами
-        if (_display.getCurrentScreen() == &screenMain) {
-            if (event == ButtonEvent::SingleClick) {
-                channel.toggleState(); 
-            } else if (event == ButtonEvent::DoubleClick) {
-                channel.setState(ChannelState::Sleep); 
-            }
+        // Якщо ми на головному екрані - викликаємо специфічні методи ScreenMain
+        if (isIron) {
+            IScreen* next = screenMain.handleButton(event, _systemContext);
+            if (next) _display.setScreen(next);
+        } else {
+            IScreen* next = screenMain.handleAirButton(event, _systemContext);
+            if (next) _display.setScreen(next);
+        }
+    }
+
+    void StationManager::handleEncoder(HeaterChannel& channel, EncoderResult enc, bool isPressed, bool isIron) {
+        if (!enc.hasMovement()) return;
+
+        // Визначаємо величину кроку (з прискоренням або без)
+        int16_t steps = isPressed ? (enc.raw > 0 ? 50 : -50) : enc.accelerated;
+
+        // Якщо ми не на головному екрані (наприклад, у меню) - віддаємо туди
+        if (_display.getCurrentScreen() != &screenMain) {
+            if (isIron) _display.dispatchEncoder(enc.raw); // У меню прискорення не потрібне
+            return;
+        }
+
+        // Якщо ми на головному екрані
+        if (isIron) {
+            screenMain.handleEncoder(steps, _systemContext);
+        } else {
+            screenMain.handleAirEncoder(steps, _systemContext);
         }
     }
 
     void StationManager::initDisplay() {
         _display.init(&screenMain, &_systemContext);
         Logger::info("SYS", "Display initialized");
-    }
-
-
-    void StationManager::handleEncoder(HeaterChannel& channel, EncoderResult enc, bool isPressed, bool isIron) {
-        if (!enc.hasMovement()) return;
-
-        if (_display.getCurrentScreen() != &screenMain) {
-            if (isIron) {
-                _display.dispatchEncoder(enc.raw);
-            }
-            return;
-        }
-
-        // Якщо ми на головному екрані - керуємо температурою
-        if (isPressed) {
-            int16_t direction = (enc.raw > 0) ? 1 : -1;
-            channel.changeTargetTemp(direction * 50);
-        } else {
-            channel.changeTargetTemp(enc.accelerated);
-        }
     }
     
     void StationManager::tickInput(uint32_t currentTickMs) {
@@ -75,10 +81,30 @@ namespace Hephaestus {
         EncoderResult ironEnc = _ironEncoder.getSteps();
         EncoderResult airEnc  = _airEncoder.getSteps();
 
+        // Обробка подій
         handleButton(_ironChannel, ironEvent, true);
         handleButton(_airChannel, airEvent, false);
         handleEncoder(_ironChannel, ironEnc, isIronPressed, true);
         handleEncoder(_airChannel, airEnc, isAirPressed, false);
+
+        // --- ЛОГІКА СЕНСОРІВ ПІДСТАВКИ ---
+        
+        // Для ПАЯЛЬНИКА: 
+        if (_ironStandPin.isActive()) {
+            _ironChannel.resetIdleTimer();
+        }
+
+        // Для ФЕНА:
+        if (_airStandPin.isActive()) {
+            // Фен відразу відправляємо спати (миттєвий сон для безпеки)
+            _airChannel.setState(ChannelState::Sleep);
+        } else {
+            // Фен зняли з підставки (рука) - скидаємо таймер і він автоматично прокидається
+            _airChannel.resetIdleTimer();
+            if (_airChannel.getState() == ChannelState::Sleep) {
+                _airChannel.setState(ChannelState::Active);
+            }
+        }
     }
 
     void StationManager::tickControl(uint32_t currentTickMs) {

@@ -1,3 +1,4 @@
+// App/Inc/interfaces/IScreen.hpp
 #pragma once
 
 #include <cstdint>
@@ -7,11 +8,12 @@
 namespace Hephaestus {
 
     class HeaterChannel;
+    class HotAirChannel;
     struct SystemConfig;
 
     struct SystemContext {
         HeaterChannel& ironChannel;
-        HeaterChannel& airChannel;
+        HotAirChannel& airChannel;
         SystemConfig&  config;
         
         float psuVoltage = 0.0f;
@@ -21,9 +23,7 @@ namespace Hephaestus {
     class IScreen {
     public:
         virtual ~IScreen() = default;
-
         virtual void draw(u8g2_t* u8g2, const SystemContext& context) = 0;
-        
         virtual void handleEncoder(int16_t steps, SystemContext& context) = 0;
         virtual IScreen* handleButton(ButtonEvent event, SystemContext& context) = 0;
     };

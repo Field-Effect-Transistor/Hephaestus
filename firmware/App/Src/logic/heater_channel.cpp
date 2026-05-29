@@ -13,17 +13,20 @@ namespace Hephaestus {
         int16_t sleepTemp,
         float kp,
         float ki,
-        float kd
+        float kd,
+        uint16_t sleepTimeoutSec 
     ) : _name(name), 
-          _pwmDriver(pwmDriver), 
-          _targetTemp(defaultTemp), 
-          _currentTemp(0), 
-          _pwmDuty(0.0f), 
-          _state(ChannelState::Off),
-          _minTemp(minTemp), 
-          _maxTemp(maxTemp), 
-          _sleepTemp(sleepTemp),
-          _pid(kp, ki, kd, 0.0f, 100.0f)
+        _pwmDriver(pwmDriver), 
+        _targetTemp(defaultTemp), 
+        _currentTemp(0), 
+        _pwmDuty(0.0f), 
+        _state(ChannelState::Off),
+        _minTemp(minTemp), 
+        _maxTemp(maxTemp), 
+        _sleepTemp(sleepTemp),
+        _sleepTimeoutSec(sleepTimeoutSec),
+        _idleTimeSec(0.0f),    
+        _pid(kp, ki, kd, 0.0f, 100.0f)
     {
         if (_targetTemp < _minTemp) _targetTemp = _minTemp;
         if (_targetTemp > _maxTemp) _targetTemp = _maxTemp;
@@ -83,10 +86,16 @@ namespace Hephaestus {
             return;
         }
 
+        if (_state == ChannelState::Active) {
+            _idleTimeSec += dt;
+            if (_sleepTimeoutSec > 0 && _idleTimeSec >= _sleepTimeoutSec) {
+                Logger::info("LOGIC", "[%s] Auto-Sleep triggered due to inactivity", _name);
+                setState(ChannelState::Sleep);
+            }
+        }
+
         int16_t activeTarget = (_state == ChannelState::Sleep) ? _sleepTemp : _targetTemp;
-
         _pwmDuty = _pid.compute((float)activeTarget, (float)_currentTemp, dt);
-
         _pwmDriver.setDutyCycle(_pwmDuty);
     }
 

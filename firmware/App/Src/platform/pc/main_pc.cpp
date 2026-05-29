@@ -85,6 +85,14 @@ namespace Hephaestus {
         bool isReady() const override { return true; }
         void write(const uint8_t* d, size_t l) override { fwrite(d, 1, l, stdout); fflush(stdout); }
     };
+
+    class SdlStandPinIron : public IDigitalPin {
+        bool isActive() override { return sdlContext.isIronInHand(); } 
+    };
+
+    class SdlStandPinAir : public IDigitalPin {
+        bool isActive() override { return !sdlContext.isAirInHand(); } 
+    };
 }
 
 // --- ІНСТАНЦІЮВАННЯ СИСТЕМИ ---
@@ -93,12 +101,15 @@ static Hephaestus::SdlPinIron     pinIron;
 static Hephaestus::SdlPinAir      pinAir;
 static Hephaestus::SdlEncoderIron encIron;
 static Hephaestus::SdlEncoderAir  encAir;
-static Hephaestus::MockPwm        ironPwm; // Окремо для паяльника
-static Hephaestus::MockPwm        airPwm;  // Окремо для фена
+static Hephaestus::MockPwm        ironPwm;
+static Hephaestus::MockPwm        airPwm;
+static Hephaestus::MockPwm        airFanPwm;
 static Hephaestus::ConsoleLogSink consoleSink;
+static Hephaestus::SdlStandPinIron standIron;
+static Hephaestus::SdlStandPinAir  standAir;
 
 static Hephaestus::StationManager station(
-    mockAdc, pinIron, pinAir, encIron, encAir, ironPwm, airPwm
+    mockAdc, pinIron, pinAir, standIron, standAir, encIron, encAir, ironPwm, airPwm, airFanPwm
 );
 
 // --- ЗАДАЧІ FREERTOS ---
@@ -142,6 +153,7 @@ void controlLoopTask(void*) {
 int main() {
     std::cout << "Starting Hephaestus FreeRTOS Simulator...\n";
     std::cout << "[UP/DOWN, ENTER] - Iron | [W/S, SPACE] - Air\n\n";
+    std::cout << "[UP/DOWN, ENTER, I] - Iron | [W/S, SPACE, A] - Air\n\n";
 
     Hephaestus::Logger::init();
     Hephaestus::Logger::addSink(&consoleSink);

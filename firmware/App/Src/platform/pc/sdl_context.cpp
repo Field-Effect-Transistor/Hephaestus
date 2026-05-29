@@ -64,6 +64,8 @@ namespace Hephaestus {
                         case SDLK_DOWN:   _ironEncDiff = -1; break;
                         case SDLK_w:      _airEncDiff  = 1;  break;
                         case SDLK_s:      _airEncDiff  = -1; break;
+                        case SDLK_i:      _ironInHand = !_ironInHand; break;
+                        case SDLK_a:      _airInHand  = !_airInHand;  break;
                     }
                 }
                 if (e.type == SDL_KEYUP) {
