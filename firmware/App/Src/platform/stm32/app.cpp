@@ -11,6 +11,7 @@
 
 #include "platform/stm32/adc_ads1115.hpp"
 #include "platform/stm32/pwm_driver_tim.hpp"
+#include "platform/stm32/pwm_driver_soft.hpp" 
 #include "platform/stm32/gpio_pin.hpp"
 #include "platform/stm32/encoder_tim.hpp"
 
@@ -30,10 +31,19 @@ static Hephaestus::GpioPin airPin(GPIOB, GPIO_PIN_13);
 static Hephaestus::EncoderTim ironEncoder(&htim2);
 static Hephaestus::EncoderTim airEncoder(&htim4);
 
-static Hephaestus::PwmDriverTim airFanPwm(&htim3, TIM_CHANNEL_3);
-static Hephaestus::PwmDriverTim ironPwm(&htim1, TIM_CHANNEL_1);
-static Hephaestus::PwmDriverTim airPwm(&htim1, TIM_CHANNEL_4);
-static Hephaestus::PwmDriverTim buzzerPwm(&htim2, TIM_CHANNEL_2); 
+// ПРАВИЛЬНЕ ПРИЗНАЧЕННЯ:
+// 1. Паяльник (T12) - Апаратний ШІМ (PA8)
+static Hephaestus::PwmDriverTim ironPwm(&htim1, TIM_CHANNEL_1); 
+
+// 2. Вентилятор Фена (Air Fan) - Апаратний ШІМ (PA11)
+static Hephaestus::PwmDriverTim airFanPwm(&htim1, TIM_CHANNEL_4); 
+
+// 3. Зумер (Buzzer) - Апаратний ШІМ (PB0)
+static Hephaestus::PwmDriverTim buzzerPwm(&htim3, TIM_CHANNEL_3); 
+
+// 4. Нагрівач Фена 220В (Air Heater Coil) - Програмний ШІМ (PB11)
+static Hephaestus::PwmDriverSoft airPwm(GPIOB, GPIO_PIN_11); 
+
 static Hephaestus::GpioPin ironStandPin(GPIOA, GPIO_PIN_4, true);
 static Hephaestus::GpioPin airStandPin(GPIOA, GPIO_PIN_5, true);
 
@@ -61,6 +71,7 @@ void displayTask(void*) {
 void controlLoopTask(void*) {
     for(;;) {
         station.tickControl(HAL_GetTick());
+        airPwm.tick(HAL_GetTick());
         
 #ifdef PC_SIMULATOR
         mockAdc.applyHeat(ironPwm.getDutyCycle(), airPwm.getDutyCycle(), 0.05f);

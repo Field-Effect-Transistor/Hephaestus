@@ -109,6 +109,15 @@ namespace Hephaestus {
     class SdlStandPinAir : public IDigitalPin {
         bool isActive() override { return !sdlContext.isAirInHand(); } 
     };
+
+    class MockBuzzerPwm : public IPwm {
+    public:
+        void setDutyCycle(float p) override {} 
+        void enable(bool s) override { 
+            if (s) std::cout << "\a";
+        }
+        float getDutyCycle() const override { return 0.0f; }
+    };
 }
 
 // --- ІНСТАНЦІЮВАННЯ СИСТЕМИ ---
@@ -120,7 +129,7 @@ static Hephaestus::SdlEncoderAir  encAir;
 static Hephaestus::MockPwm        ironPwm;
 static Hephaestus::MockPwm        airPwm;
 static Hephaestus::MockPwm        airFanPwm;
-static Hephaestus::MockPwm        buzzerPwm;
+static Hephaestus::MockBuzzerPwm  buzzerPwm;
 static Hephaestus::ConsoleLogSink consoleSink;
 static Hephaestus::SdlStandPinIron standIron;
 static Hephaestus::SdlStandPinAir  standAir;
@@ -159,13 +168,13 @@ void* rtosThreadRunner(void* arg) {
 
 void controlLoopTask(void*) {
     for(;;) {
-        station.tickControl(HAL_GetTick());
+        uint32_t tick = HAL_GetTick();
         
-#ifdef PC_SIMULATOR
+        station.tickControl(tick);
+        
         mockAdc.applyHeat(ironPwm.getDutyCycle(), airPwm.getDutyCycle(), 0.05f);
-#endif
 
-        vTaskDelay(pdMS_TO_TICKS(50)); // Цикл керування 20 Гц
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
