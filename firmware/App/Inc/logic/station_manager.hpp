@@ -65,6 +65,12 @@ namespace Hephaestus {
         void tickInput(uint32_t currentTickMs); 
         void tickDisplay();                     
         void tickControl(uint32_t currentTickMs);
+
+        bool hasSystemError() const {
+            return (_ironChannel.getState() == ChannelState::Error) ||
+                (_airChannel.getState() == ChannelState::Error) ||
+                _systemContext.config.sensors.ironKp < 0;
+        }
     };
 
 } // namespace Hephaestus

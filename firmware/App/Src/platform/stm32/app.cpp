@@ -4,6 +4,7 @@
 #include "usart.h"
 #include "tim.h"
 #include "i2c.h"
+#include "iwdg.h"
 
 #include "system/logger/logger.hpp"
 #include "system/logger/uart_log_sink.hpp"
@@ -27,6 +28,7 @@ static Hephaestus::Ads1115     adc(&hi2c1);
 
 static Hephaestus::GpioPin ironPin(GPIOB, GPIO_PIN_12);
 static Hephaestus::GpioPin airPin(GPIOB, GPIO_PIN_13);
+static Hephaestus::GpioPin startSensePin(GPIOB, GPIO_PIN_14, false);
 
 static Hephaestus::EncoderTim ironEncoder(&htim2);
 static Hephaestus::EncoderTim airEncoder(&htim4);
@@ -61,6 +63,34 @@ void appLoopTask(void*) {
     }
 }
 
+void safetyTask(void*) {
+    for(;;) {
+        HAL_IWDG_Refresh(&hiwdg);
+
+        if (station.hasSystemError()) {
+            Hephaestus::Logger::fatal("SAFETY", "CRITICAL FAULT! KILLING POWER!");
+            
+            // Апаратно глушимо всі ШІМ-канали
+            ironPwm.enable(false);
+            airPwm.enable(false);
+            airFanPwm.enable(false);
+            
+            // Вмикаємо зумер на постійний сигнал тривоги
+            buzzerPwm.setDutyCycle(50.0f);
+            buzzerPwm.enable(true);
+
+            // ВБИВАЄМО ЖИВЛЕННЯ!
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET); 
+
+            while(1) {
+                vTaskDelay(pdMS_TO_TICKS(1000)); 
+            }
+        }
+
+        // Перевіряємо стан кожні 20 мс (50 Гц)
+        vTaskDelay(pdMS_TO_TICKS(20));
+    }
+}
 void displayTask(void*) {
     for(;;) {
         station.tickDisplay();
@@ -87,6 +117,8 @@ extern "C" void app_setup() {
     Hephaestus::Logger::init();
     Hephaestus::Logger::addSink(&uartLogSink);
 
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+
     ironPwm.enable(true);
     airPwm.enable(true);
     airFanPwm.enable(true);
@@ -97,6 +129,7 @@ extern "C" void app_setup() {
     xTaskCreate(displayTask,                  "Display", configMINIMAL_STACK_SIZE, nullptr, 2, nullptr);
     xTaskCreate(appLoopTask,                  "Input",   configMINIMAL_STACK_SIZE, nullptr, 3, nullptr);
     xTaskCreate(controlLoopTask,              "Control", configMINIMAL_STACK_SIZE, nullptr, 4, nullptr);
+    xTaskCreate(safetyTask,                   "Safety",  configMINIMAL_STACK_SIZE, nullptr, 5, nullptr);
 }
 
 // Main loop stub (controlled by RTOS scheduler)

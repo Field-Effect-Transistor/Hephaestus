@@ -19,6 +19,7 @@
 #include "system/i2c_arbiter.hpp"
 
 #include "platform/pc/file_storage.hpp"
+#include "platform/pc/hal_mock.hpp"
 
 SemaphoreHandle_t Hephaestus::i2c1Mutex = nullptr;
 extern "C" uint32_t HAL_GetTick(); 
@@ -178,6 +179,28 @@ void controlLoopTask(void*) {
     }
 }
 
+void safetyTask(void*) {
+    for(;;) {
+        // У ПК-версії немає реального IWDG, але ми імітуємо виклик
+        HAL_IWDG_Refresh(&hiwdg);
+
+        if (station.hasSystemError()) {
+            Hephaestus::Logger::fatal("SAFETY", "CRITICAL FAULT! SIMULATOR POWER KILLED!");
+            
+            ironPwm.enable(false);
+            airPwm.enable(false);
+            airFanPwm.enable(false);
+            buzzerPwm.enable(true); // У консолі буде пищати "\a" нескінченно
+
+            while(1) { 
+                vTaskDelay(pdMS_TO_TICKS(100)); // На ПК треба спати, щоб не повісити потік ОС
+            }
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(20));
+    }
+}
+
 int main() {
     std::cout << "Starting Hephaestus FreeRTOS Simulator...\n";
     std::cout << "[UP/DOWN, ENTER] - Iron | [W/S, SPACE] - Air\n\n";
@@ -193,6 +216,7 @@ int main() {
     xTaskCreate(displayTask,                  "Display", configMINIMAL_STACK_SIZE, nullptr, 2, nullptr);
     xTaskCreate(appLoopTask,                  "Input",   configMINIMAL_STACK_SIZE, nullptr, 3, nullptr);
     xTaskCreate(controlLoopTask,              "Control", configMINIMAL_STACK_SIZE, nullptr, 4, nullptr);
+    xTaskCreate(safetyTask,                   "Safety",  configMINIMAL_STACK_SIZE, nullptr, 5, nullptr);
 
     pthread_t rtosThread;
     pthread_create(&rtosThread, nullptr, rtosThreadRunner, nullptr);

@@ -11,15 +11,18 @@ struct UART_HandleTypeDef { int gState; };
 struct TIM_HandleTypeDef {
     struct { uint32_t Period; } Init;
 };
+struct IWDG_HandleTypeDef {};
 
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
+extern IWDG_HandleTypeDef hiwdg;
 
 extern "C" {
     // Оголошуємо функції HAL
     uint32_t HAL_GetTick();
     int HAL_I2C_Master_Transmit(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+    int HAL_IWDG_Refresh(IWDG_HandleTypeDef *hiwdg);
 }

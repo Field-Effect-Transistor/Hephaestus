@@ -11,6 +11,7 @@ I2C_HandleTypeDef hi2c1;
 TIM_HandleTypeDef htim1 = {{1000}};
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
+IWDG_HandleTypeDef hiwdg;
 
 extern "C" {
     uint32_t HAL_GetTick() {
@@ -23,7 +24,6 @@ extern "C" {
         return HAL_OK; 
     }
 
-    // ТУТ МАГІЯ СИМУЛЯЦІЇ: Імітуємо реальну затримку передачі байтів по I2C!
     int HAL_I2C_Master_Transmit(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t Timeout) { 
         vTaskDelay(pdMS_TO_TICKS(1)); // Відправка 32 байтів займає ~1 мс
         return HAL_OK; 
@@ -41,4 +41,5 @@ extern "C" {
     void HAL_TIM_PWM_Start(TIM_HandleTypeDef *htim, uint32_t Channel) {}
     void HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel) {}
     void __HAL_TIM_SET_COMPARE(TIM_HandleTypeDef *htim, uint32_t Channel, uint32_t value) {}
+    int HAL_IWDG_Refresh(IWDG_HandleTypeDef *hiwdg) { return HAL_OK; }
 }
