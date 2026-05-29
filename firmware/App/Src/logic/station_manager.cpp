@@ -5,21 +5,34 @@
 
 namespace Hephaestus {
 
-    StationManager::StationManager(IAdc& adc, 
-                                   IDigitalPin& ironPin, IDigitalPin& airPin, 
-                                   IDigitalPin& ironStandPin, IDigitalPin& airStandPin,
-                                   IEncoder& ironEnc, IEncoder& airEnc, 
-                                   IPwm& ironPwm, IPwm& airPwm, IPwm& airFanPwm)
-        : _adc(adc), _ironPin(ironPin), _airPin(airPin), 
+    StationManager::StationManager(
+        IStorage& storage, IAdc& adc, 
+        IDigitalPin& ironPin, IDigitalPin& airPin, 
+        IDigitalPin& ironStandPin, IDigitalPin& airStandPin, 
+        IEncoder& ironEnc, IEncoder& airEnc, 
+        IPwm& ironPwm, IPwm& airPwm, IPwm& airFanPwm)
+        : _storage(storage), _adc(adc), 
+          _ironPin(ironPin), _airPin(airPin), 
+          _ironStandPin(ironStandPin), _airStandPin(airStandPin),
           _ironEncoder(ironEnc), _airEncoder(airEnc),
+          // При створенні ми використовуємо дефолтні температури (300), але відразу ж їх перезапишемо нижче!
           _ironChannel("IRON", ironPwm, 300, 100, 450, 150, 
                        _sysConfig.sensors.ironKp, _sysConfig.sensors.ironKi, _sysConfig.sensors.ironKd, _sysConfig.sensors.ironSleepTimeoutSec),
-          _ironStandPin(ironStandPin), _airStandPin(airStandPin), 
           _airChannel("AIR", airPwm, airFanPwm, 300, 100, 500, 50, 
-                      _sysConfig.sensors.airKp, _sysConfig.sensors.airKi, _sysConfig.sensors.airKd,
-                      _sysConfig.sensors.airSleepTimeoutSec), // <--- ДОДАНО
+                      _sysConfig.sensors.airKp, _sysConfig.sensors.airKi, _sysConfig.sensors.airKd, _sysConfig.sensors.airSleepTimeoutSec),
           _systemContext{_ironChannel, _airChannel, _sysConfig}
-    {}
+    {
+        if (_storage.load(_sysConfig)) {
+            Logger::info("SYS", "Configuration loaded from storage.");
+        } else {
+            Logger::warn("SYS", "Storage empty or corrupted. Using defaults.");
+            _storage.save(_sysConfig); 
+        }
+
+        _ironChannel.setTargetTemp(_sysConfig.user.ironTargetTemp);
+        _airChannel.setTargetTemp(_sysConfig.user.airTargetTemp);
+        _airChannel.setFanSpeed(_sysConfig.user.airFanSpeed);
+    }
 
     void StationManager::init() {
         _ironEncoder.init();
@@ -30,19 +43,49 @@ namespace Hephaestus {
     void StationManager::handleButton(HeaterChannel& channel, ButtonEvent event, bool isIron) {
         if (event == ButtonEvent::None) return;
 
-        // Якщо ми в меню або інших екранах - віддаємо керування їм (тільки кнопці паяльника)
+        channel.resetIdleTimer();
+
         if (_display.getCurrentScreen() != &screenMain) {
-            if (isIron) _display.dispatchButton(event);
+            if (isIron) {
+                IScreen* oldScreen = _display.getCurrentScreen();
+                _display.dispatchButton(event);
+                if (oldScreen != &screenMain && _display.getCurrentScreen() == &screenMain) {
+                    Logger::info("SYS", "Exited menu. Saving config to storage.");
+                    _storage.save(_sysConfig);
+                }
+            }
             return;
         }
 
-        // Якщо ми на головному екрані - викликаємо специфічні методи ScreenMain
         if (isIron) {
             IScreen* next = screenMain.handleButton(event, _systemContext);
             if (next) _display.setScreen(next);
         } else {
             IScreen* next = screenMain.handleAirButton(event, _systemContext);
             if (next) _display.setScreen(next);
+        }
+
+        if (event == ButtonEvent::SingleClick || event == ButtonEvent::DoubleClick || event == ButtonEvent::LongPress) {
+            bool needsSave = false;
+            
+            // Перевіряємо, чи змінилася цільова температура відносно тої, що в конфігу
+            if (_sysConfig.user.ironTargetTemp != _ironChannel.getTargetTemp()) {
+                _sysConfig.user.ironTargetTemp = _ironChannel.getTargetTemp();
+                needsSave = true;
+            }
+            if (_sysConfig.user.airTargetTemp != _airChannel.getTargetTemp()) {
+                _sysConfig.user.airTargetTemp = _airChannel.getTargetTemp();
+                needsSave = true;
+            }
+            if (_sysConfig.user.airFanSpeed != _airChannel.getFanSpeed()) {
+                _sysConfig.user.airFanSpeed = _airChannel.getFanSpeed();
+                needsSave = true;
+            }
+
+            if (needsSave) {
+                Logger::info("SYS", "Target temp changed. Saving to storage.");
+                _storage.save(_sysConfig);
+            }
         }
     }
 

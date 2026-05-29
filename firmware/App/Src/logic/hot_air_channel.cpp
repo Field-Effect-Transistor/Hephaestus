@@ -28,23 +28,16 @@ namespace Hephaestus {
         int16_t currentTemp = getCurrentTemp();
 
         if (currentState == ChannelState::Active) {
-            // Викликаємо алгоритм ПІД-регулятора з базового класу для нагрівача
             HeaterChannel::updateControlLoop(dt);
             
-            // Турбіна дує із заданою користувачем швидкістю
             _fanPwmDriver.setDutyCycle(_fanDuty); 
         } 
         else {
-            // 2. РЕЖИМИ ВИМКНЕНО / СОН / ПОМИЛКА
-            // Гарантовано повністю вимикаємо нагрівач (спіраль)
             forcePwmOff(); 
 
-            // Логіка продувки (Cooling down)
             if (currentTemp > _safeCoolingTemp) {
-                // Поки гаряче - дуємо на 100% для швидкого охолодження!
                 _fanPwmDriver.setDutyCycle(100.0f); 
             } else {
-                // Температура впала нижче 50°C - можна безпечно зупинити турбіну
                 _fanPwmDriver.setDutyCycle(0.0f);   
             }
         }

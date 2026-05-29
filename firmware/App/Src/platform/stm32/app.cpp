@@ -16,6 +16,8 @@
 
 #include "logic/station_manager.hpp"
 
+#include "platform/stm32/flash_storage.hpp"
+
 SemaphoreHandle_t Hephaestus::i2c1Mutex = nullptr;
 
 // Hardware drivers instantiation
@@ -34,8 +36,10 @@ static Hephaestus::PwmDriverTim airPwm(&htim1, TIM_CHANNEL_4);
 static Hephaestus::GpioPin ironStandPin(GPIOA, GPIO_PIN_4, true);
 static Hephaestus::GpioPin airStandPin(GPIOA, GPIO_PIN_5, true);
 
+static Hephaestus::FlashStorage storage;
+
 static Hephaestus::StationManager station(
-    adc, ironPin, airPin, ironStandPin, airStandPin, ironEncoder, airEncoder, ironPwm, airPwm, airFanPwm
+    storage, adc, ironPin, airPin, ironStandPin, airStandPin, ironEncoder, airEncoder, ironPwm, airPwm, airFanPwm
 );
 
 // RTOS Tasks

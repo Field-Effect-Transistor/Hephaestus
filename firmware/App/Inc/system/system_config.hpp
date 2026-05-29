@@ -39,8 +39,15 @@ namespace Hephaestus {
         uint16_t airSleepTimeoutSec = 300;  // 5 хвилин (300 сек) бездіяльності для фена
     };
 
+    struct UserSettings {
+        int16_t ironTargetTemp = 300; // Цільова температура паяльника
+        int16_t airTargetTemp  = 300; // Цільова температура фена
+        int16_t airFanSpeed    = 50;  // Швидкість вентилятора фена (у відсотках)
+    };
+
     struct SystemConfig {
         SensorConfig sensors;
+        UserSettings user;
     };
 
 } // namespace Hephaestus

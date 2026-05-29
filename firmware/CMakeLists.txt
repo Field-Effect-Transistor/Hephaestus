@@ -33,7 +33,8 @@ if(BUILD_SIMULATOR)
         # Platform Specifics (Mocks & PC Entry Point)
         App/Src/platform/pc/main_pc.cpp
         App/Src/platform/pc/hal_mock.cpp
-        App/Src/platform/pc/sdl_context.cpp  # <--- ДОДАНО ОСЬ ТУТ
+        App/Src/platform/pc/sdl_context.cpp
+        App/Src/platform/pc/file_storage.cpp 
         
         # Core Business Logic
         App/Src/logic/station_manager.cpp
@@ -95,6 +96,7 @@ else()
         App/Src/platform/stm32/app.cpp
         App/Src/platform/stm32/exti_registry.cpp
         App/Src/platform/stm32/adc_ads1115.cpp
+        App/Src/platform/stm32/flash_storage.cpp
         App/Src/platform/stm32/encoder_tim.cpp
         App/Src/system/logger/uart_log_sink.cpp
         

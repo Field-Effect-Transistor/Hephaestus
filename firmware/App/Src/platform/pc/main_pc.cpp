@@ -18,6 +18,8 @@
 #include "system/logger/logger.hpp"
 #include "system/i2c_arbiter.hpp"
 
+#include "platform/pc/file_storage.hpp"
+
 SemaphoreHandle_t Hephaestus::i2c1Mutex = nullptr;
 extern "C" uint32_t HAL_GetTick(); 
 
@@ -108,8 +110,10 @@ static Hephaestus::ConsoleLogSink consoleSink;
 static Hephaestus::SdlStandPinIron standIron;
 static Hephaestus::SdlStandPinAir  standAir;
 
+static Hephaestus::FileStorage    storage;
+
 static Hephaestus::StationManager station(
-    mockAdc, pinIron, pinAir, standIron, standAir, encIron, encAir, ironPwm, airPwm, airFanPwm
+    storage, mockAdc, pinIron, pinAir, standIron, standAir, encIron, encAir, ironPwm, airPwm, airFanPwm
 );
 
 // --- ЗАДАЧІ FREERTOS ---
