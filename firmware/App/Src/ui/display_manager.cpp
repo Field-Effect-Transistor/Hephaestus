@@ -1,37 +1,29 @@
 #include "ui/display_manager.hpp"
 #include "system/logger/logger.hpp"
+#include "system/i2c_arbiter.hpp"
+#include "FreeRTOS.h"
+#include "task.h"
 #include <cstdio>
 
-// Підключаємо платформо-залежні речі
 #ifndef PC_SIMULATOR
     #include "i2c.h"
-    #include "system/i2c_arbiter.hpp"
-    #include "FreeRTOS.h"
-    #include "task.h"
-    #define OLED_I2C_ADDRESS 0x78 
 #else
+    #include "platform/pc/hal_mock.hpp"
     #include "platform/pc/sdl_context.hpp"
-    // Отримуємо доступ до глобального контексту вікна з main_pc.cpp
     extern Hephaestus::SdlContext sdlContext; 
 #endif
 
+#define OLED_I2C_ADDRESS 0x78 
+
 extern "C" {
-    // Коллбек затримок для u8g2
     uint8_t u8x8_gpio_and_delay_stm32(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
-#ifndef PC_SIMULATOR
-        switch (msg) {
-            case U8X8_MSG_DELAY_MILLI:
-                vTaskDelay(pdMS_TO_TICKS(arg_int));
-                break;
-            default: return 0;
+        if (msg == U8X8_MSG_DELAY_MILLI) {
+            vTaskDelay(pdMS_TO_TICKS(arg_int));
         }
-#endif
         return 1;
     }
 
-    // Коллбек I2C шини для u8g2
     uint8_t u8x8_byte_stm32_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
-#ifndef PC_SIMULATOR
         static uint8_t buffer[32];
         static uint8_t buf_idx;
 
@@ -49,17 +41,17 @@ extern "C" {
             {
                 if (Hephaestus::i2c1Mutex != nullptr) {
                     xSemaphoreTake(Hephaestus::i2c1Mutex, portMAX_DELAY);
-                    HAL_I2C_Master_Transmit(&hi2c1, OLED_I2C_ADDRESS, buffer, buf_idx, 10);
+                    HAL_I2C_Master_Transmit(&hi2c1, OLED_I2C_ADDRESS, buffer, buf_idx, HAL_MAX_DELAY);
                     xSemaphoreGive(Hephaestus::i2c1Mutex);
                 } else {
-                    HAL_I2C_Master_Transmit(&hi2c1, OLED_I2C_ADDRESS, buffer, buf_idx, 10);
+                    HAL_I2C_Master_Transmit(&hi2c1, OLED_I2C_ADDRESS, buffer, buf_idx, HAL_MAX_DELAY);
                 }
                 break;
             }
-            default: return 0;
+            default:
+                return 0;
         }
-#endif
-        return 1; // У симуляторі I2C "завжди працює"
+        return 1;
     }
 }
 
@@ -72,11 +64,12 @@ namespace Hephaestus {
         u8g2_Setup_ssd1306_i2c_128x64_noname_f(
             &_u8g2, U8G2_R0, u8x8_byte_stm32_hw_i2c, u8x8_gpio_and_delay_stm32
         );
+
         u8g2_InitDisplay(&_u8g2);
         u8g2_SetPowerSave(&_u8g2, 0);
     }
 
-void DisplayManager::update() {
+    void DisplayManager::update() {
         if (!_currentScreen || !_context) return;
 
         u8g2_ClearBuffer(&_u8g2);
@@ -85,6 +78,8 @@ void DisplayManager::update() {
 #ifndef PC_SIMULATOR
         u8g2_SendBuffer(&_u8g2);
 #else
+        u8g2_SendBuffer(&_u8g2);
+        
         sdlContext.submitBuffer(u8g2_GetBufferPtr(&_u8g2));
 #endif
     }

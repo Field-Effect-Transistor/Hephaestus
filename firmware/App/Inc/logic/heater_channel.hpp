@@ -55,6 +55,8 @@ namespace Hephaestus {
         void setCurrentTemp(int16_t temp) { _currentTemp = temp; }
         void updateControlLoop(float dt);
 
+        void forcePwmOff() { _pwmDriver.setDutyCycle(0.0f); }
+
         // Геттери
         int16_t getTargetTemp() const { return _targetTemp; }
         int16_t getCurrentTemp() const { return _currentTemp; }

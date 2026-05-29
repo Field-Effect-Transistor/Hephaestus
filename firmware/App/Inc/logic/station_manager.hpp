@@ -48,6 +48,7 @@ namespace Hephaestus {
         
         void tickInput(uint32_t currentTickMs); 
         void tickDisplay();                     
+        void tickControl(uint32_t currentTickMs);
     };
 
 } // namespace Hephaestus

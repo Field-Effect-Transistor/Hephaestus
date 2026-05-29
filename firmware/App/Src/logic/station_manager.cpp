@@ -64,19 +64,8 @@ namespace Hephaestus {
             channel.changeTargetTemp(enc.accelerated);
         }
     }
-
-    // App/Src/logic/station_manager.cpp
-
+    
     void StationManager::tickInput(uint32_t currentTickMs) {
-        static uint32_t lastTickMs = 0; 
-        
-        float dt = (float)(currentTickMs - lastTickMs) / 1000.0f;
-        lastTickMs = currentTickMs;
-
-        if (dt <= 0.0f || dt > 1.0f) {
-            dt = 0.015f; // Fallback на дефолтні 15 мс
-        }
-
         bool isIronPressed = _ironPin.isActive();
         bool isAirPressed  = _airPin.isActive();
 
@@ -90,27 +79,40 @@ namespace Hephaestus {
         handleButton(_airChannel, airEvent, false);
         handleEncoder(_ironChannel, ironEnc, isIronPressed, true);
         handleEncoder(_airChannel, airEnc, isAirPressed, false);
+    }
 
+    void StationManager::tickControl(uint32_t currentTickMs) {
+        static uint32_t lastTickMs = 0; 
+        float dt = (float)(currentTickMs - lastTickMs) / 1000.0f;
+        lastTickMs = currentTickMs;
+        if (dt <= 0.0f || dt > 1.0f) dt = 0.05f;
+
+        // 1. АЛГОРИТМ ЧАСОВОГО РОЗДІЛЕННЯ (TDM)
+        _ironChannel.forcePwmOff();
+        vTaskDelay(pdMS_TO_TICKS(2));
+
+        // 2. БЕЗПЕЧНЕ ЧИТАННЯ АЦП 
         float ironVolts = _adc.readVoltage(2);
         float airVolts  = _adc.readVoltage(3);
-
         float psuAdcVolts = _adc.readVoltage(0);
         float ntcAdcVolts = _adc.readVoltage(1);
 
+        // 3. МАТЕМАТИКА
         _systemContext.psuVoltage = MathSensors::calculatePsuVoltage(psuAdcVolts, _sysConfig.sensors);
         _systemContext.ambientTempC = MathSensors::calculateNtcTempC(ntcAdcVolts, _sysConfig.sensors);
 
         float ironTempC = MathSensors::calculateThermocoupleTemp(
-            ironVolts, _sysConfig.sensors.ironOpAmpGain, 0, 
+            ironVolts, _sysConfig.sensors.ironOpAmpGain, _sysConfig.sensors.ironOpAmpOffsetV, 
             _sysConfig.sensors.ironTcSensitivity, _systemContext.ambientTempC);
             
         float airTempC  = MathSensors::calculateThermocoupleTemp(
-            airVolts, _sysConfig.sensors.airOpAmpGain, 0, 
+            airVolts, _sysConfig.sensors.airOpAmpGain, _sysConfig.sensors.airOpAmpOffsetV, 
             _sysConfig.sensors.airTcSensitivity, _systemContext.ambientTempC);
 
         _ironChannel.setCurrentTemp(static_cast<int16_t>(ironTempC));
         _airChannel.setCurrentTemp(static_cast<int16_t>(airTempC));
 
+        // 4. ПІД-РЕГУЛЯТОР ТА УВІМКНЕННЯ ШІМ
         _ironChannel.updateControlLoop(dt);
         _airChannel.updateControlLoop(dt);
     }

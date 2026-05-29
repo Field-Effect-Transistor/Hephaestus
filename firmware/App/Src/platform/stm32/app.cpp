@@ -1,3 +1,5 @@
+//  App/Src/platform/stm32/app.cpp
+
 #include "app.hpp"
 #include "usart.h"
 #include "tim.h"
@@ -49,6 +51,17 @@ void displayTask(void*) {
     }
 }
 
+void controlLoopTask(void*) {
+    for(;;) {
+        station.tickControl(HAL_GetTick());
+        
+#ifdef PC_SIMULATOR
+        mockAdc.applyHeat(ironPwm.getDutyCycle(), airPwm.getDutyCycle(), 0.05f);
+#endif
+        vTaskDelay(pdMS_TO_TICKS(50)); // Цикл керування 20 Гц
+    }
+}
+
 // System initialization entry point
 extern "C" void app_setup() {
     Hephaestus::i2c1Mutex = xSemaphoreCreateMutex();
@@ -61,9 +74,10 @@ extern "C" void app_setup() {
 
     station.init();
 
-    xTaskCreate(Hephaestus::Logger::taskLoop, "Logger", 256, nullptr, tskIDLE_PRIORITY + 1, nullptr);
-    xTaskCreate(displayTask, "Display", 384, nullptr, tskIDLE_PRIORITY + 2, nullptr);
-    xTaskCreate(appLoopTask, "Input", 256, nullptr, tskIDLE_PRIORITY + 3, nullptr);
+    xTaskCreate(Hephaestus::Logger::taskLoop, "Logger",  configMINIMAL_STACK_SIZE, nullptr, 1, nullptr);
+    xTaskCreate(displayTask,                  "Display", configMINIMAL_STACK_SIZE, nullptr, 2, nullptr);
+    xTaskCreate(appLoopTask,                  "Input",   configMINIMAL_STACK_SIZE, nullptr, 3, nullptr);
+    xTaskCreate(controlLoopTask,              "Control", configMINIMAL_STACK_SIZE, nullptr, 4, nullptr);
 }
 
 // Main loop stub (controlled by RTOS scheduler)

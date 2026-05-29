@@ -16,7 +16,9 @@
 
 #include "logic/station_manager.hpp"
 #include "system/logger/logger.hpp"
+#include "system/i2c_arbiter.hpp"
 
+SemaphoreHandle_t Hephaestus::i2c1Mutex = nullptr;
 extern "C" uint32_t HAL_GetTick(); 
 
 Hephaestus::SdlContext sdlContext;
@@ -125,6 +127,18 @@ void* rtosThreadRunner(void* arg) {
     return nullptr;
 }
 
+void controlLoopTask(void*) {
+    for(;;) {
+        station.tickControl(HAL_GetTick());
+        
+#ifdef PC_SIMULATOR
+        mockAdc.applyHeat(ironPwm.getDutyCycle(), airPwm.getDutyCycle(), 0.05f);
+#endif
+
+        vTaskDelay(pdMS_TO_TICKS(50)); // Цикл керування 20 Гц
+    }
+}
+
 int main() {
     std::cout << "Starting Hephaestus FreeRTOS Simulator...\n";
     std::cout << "[UP/DOWN, ENTER] - Iron | [W/S, SPACE] - Air\n\n";
@@ -135,9 +149,10 @@ int main() {
     sdlContext.init();
     station.init();
 
-    xTaskCreate(Hephaestus::Logger::taskLoop, "Logger",  16384, nullptr, 1, nullptr);
-    xTaskCreate(displayTask,                  "Display", 16384, nullptr, 2, nullptr);
-    xTaskCreate(appLoopTask,                  "Input",   16384, nullptr, 3, nullptr);
+    xTaskCreate(Hephaestus::Logger::taskLoop, "Logger",  configMINIMAL_STACK_SIZE, nullptr, 1, nullptr);
+    xTaskCreate(displayTask,                  "Display", configMINIMAL_STACK_SIZE, nullptr, 2, nullptr);
+    xTaskCreate(appLoopTask,                  "Input",   configMINIMAL_STACK_SIZE, nullptr, 3, nullptr);
+    xTaskCreate(controlLoopTask,              "Control", configMINIMAL_STACK_SIZE, nullptr, 4, nullptr);
 
     pthread_t rtosThread;
     pthread_create(&rtosThread, nullptr, rtosThreadRunner, nullptr);
